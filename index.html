@@ -10,12 +10,14 @@
             --bg-color: #ffffff;
             --text-color: #000000;
             --border-color: #eeeeee;
+            --delete-color: #ff4d4d;
         }
 
         [data-theme="dark"] {
             --bg-color: #121212;
             --text-color: #ffffff;
             --border-color: #333333;
+            --delete-color: #ff6666;
         }
 
         body { 
@@ -64,11 +66,22 @@
             padding: 20px 0; border-bottom: 1px solid var(--border-color);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .item-left { display: flex; flex-direction: column; gap: 4px; }
-        .item-right { text-align: right; }
+        .item-left { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+        .item-right { text-align: right; margin-right: 15px; }
         
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; letter-spacing: 1.5px; opacity: 0.5; text-transform: uppercase; }
+
+        /* Individual Delete Style */
+        .del-text {
+            color: var(--delete-color);
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 5px;
+        }
 
         .footer { margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%; }
         .clear-btn { 
@@ -136,13 +149,20 @@
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
 
-        const entry = { date: dateStr, time: timeStr, duration: duration, amount: volume };
+        const entry = { id: Date.now(), date: dateStr, time: timeStr, duration: duration, amount: volume };
         let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         history.unshift(entry);
         localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0, 10)));
 
         document.getElementById('duration').value = "";
         document.getElementById('volume').value = "";
+        displayHistory();
+    }
+
+    function deleteEntry(id) {
+        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('pumpLogs', JSON.stringify(history));
         displayHistory();
     }
 
@@ -158,12 +178,13 @@
                 <div class="item-right">
                     <span class="val-main">${item.duration} MIN</span>
                 </div>
+                <div class="del-text" onclick="deleteEntry(${item.id})">Delete</div>
             </div>
         `).join('') : '<p style="font-size:0.7rem; opacity:0.3; text-align:center; margin-top:20px;">No sessions logged yet.</p>';
     }
 
     function clearHistory() {
-        if(confirm("Are you sure you want to clear all history? This cannot be undone.")) {
+        if(confirm("Are you sure you want to clear all history?")) {
             localStorage.removeItem('pumpLogs');
             displayHistory();
         }
