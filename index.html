@@ -11,6 +11,7 @@
             --text-color: #000000;
             --border-color: #eeeeee;
             --delete-color: #ff4d4d;
+            --toggle-bg: #f0f0f0;
         }
 
         [data-theme="dark"] {
@@ -18,6 +19,7 @@
             --text-color: #ffffff;
             --border-color: #333333;
             --delete-color: #ff6666;
+            --toggle-bg: #333333;
         }
 
         body { 
@@ -31,25 +33,41 @@
 
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
 
-        /* SnoozyBubba Text Logo Styling */
-        .brand-logo {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            font-size: 1.5rem;
-            letter-spacing: -0.5px;
-            margin-bottom: 30px;
-            opacity: 0.6; /* Subtle look */
-            text-align: center;
-        }
-        .brand-logo span { font-weight: 600; }
-
+        /* Navigation & Toggle */
         .nav-bar { width: 100%; max-width: 340px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .nav-links { display: flex; gap: 20px; }
         .nav-item { font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
         .nav-item.active { opacity: 1; font-weight: 600; }
 
-        .deco { position: absolute; z-index: -1; opacity: 0.1; font-size: 3rem; pointer-events: none; }
-        
+        /* Modern Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--toggle-bg);
+            transition: .4s; border-radius: 34px;
+            display: flex; align-items: center; justify-content: space-around;
+            font-size: 12px;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s; border-radius: 50%;
+            z-index: 2;
+        }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 30px; opacity: 0.6; text-align: center; }
+        .brand-logo span { font-weight: 600; }
+
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
 
@@ -62,10 +80,7 @@
             border-radius: 0; outline: none;
         }
 
-        button.main-btn { 
-            background: var(--text-color); color: var(--bg-color); border: none; 
-            padding: 22px; width: 100%; margin-top: 50px; cursor: pointer;
-        }
+        button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; }
 
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
@@ -84,10 +99,16 @@
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
             <span class="nav-item" id="btn-remind" onclick="showPage('remind')">Remind</span>
         </div>
-        <div class="nav-item kiona" onclick="toggleTheme()" id="themeLabel">🌙</div>
+        <!-- Toggle Switch -->
+        <label class="switch">
+            <input type="checkbox" id="themeToggle" onclick="toggleTheme()">
+            <span class="slider">
+                <span>☀️</span>
+                <span>🌙</span>
+            </span>
+        </label>
     </div>
 
-    <!-- SNOOZYBUBBA LOGO -->
     <div class="brand-logo">Snoozy<span>Bubba</span></div>
 
     <!-- LOG PAGE -->
@@ -98,7 +119,6 @@
         <div class="label">Amount Produced (Oz)</div>
         <input type="number" id="volume" placeholder="0.0" step="0.5" inputmode="decimal">
         <button class="main-btn kiona" onclick="logSession()">Confirm</button>
-
         <div class="label" style="margin-top: 60px; margin-bottom: 20px; opacity: 0.4;">Recent History:</div>
         <div id="historyList"></div>
         <div class="footer">
@@ -133,10 +153,10 @@
     }
 
     function toggleTheme() {
-        const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', next);
-        document.getElementById('themeLabel').innerText = next === 'light' ? '🌙' : '☀️';
-        localStorage.setItem('pumpTheme', next);
+        const isChecked = document.getElementById('themeToggle').checked;
+        const theme = isChecked ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('pumpTheme', theme);
     }
 
     function logSession() {
@@ -201,7 +221,10 @@
     function clearHistory() { if(confirm("Clear all?")) { localStorage.removeItem('pumpLogs'); displayHistory(); } }
 
     const savedTheme = localStorage.getItem('pumpTheme');
-    if(savedTheme) { document.body.setAttribute('data-theme', savedTheme); document.getElementById('themeLabel').innerText = savedTheme === 'light' ? '🌙' : '☀️'; }
+    if(savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').checked = true;
+    }
     displayHistory();
     updateReminderUI();
 </script>
