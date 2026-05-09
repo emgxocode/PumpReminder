@@ -31,7 +31,6 @@
 
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
 
-        /* Navigation */
         .nav-bar { width: 100%; max-width: 340px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .nav-links { display: flex; gap: 20px; }
         .nav-item { font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
@@ -43,7 +42,6 @@
         [data-theme="dark"] .light-only { display: none; }
         [data-theme="dark"] .dark-only { display: block; }
 
-        /* Pages */
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
 
@@ -73,6 +71,9 @@
 
         .footer { margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%; }
         .clear-btn { background: none; border: none; color: var(--text-color); opacity: 0.3; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; }
+        
+        /* New Delete Reminder Button Style */
+        .del-rem-btn { background: none; border: none; color: var(--delete-color); font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; font-weight: 600; margin-top: 20px; display: none; }
     </style>
 </head>
 <body data-theme="light">
@@ -99,6 +100,9 @@
 
         <div class="label" style="margin-top: 60px; margin-bottom: 20px; opacity: 0.4;">Recent History</div>
         <div id="historyList"></div>
+        <div class="footer">
+            <button class="clear-btn kiona" onclick="clearHistory()">Clear History</button>
+        </div>
     </div>
 
     <!-- REMINDER PAGE -->
@@ -111,14 +115,11 @@
         </div>
         <button class="main-btn kiona" onclick="setReminder()">Set Reminder</button>
         <div id="reminderStatus" class="kiona"></div>
-    </div>
-
-    <div class="footer">
-        <button class="clear-btn kiona" onclick="clearHistory()">Clear History</button>
+        <!-- Individual Delete Reminder button -->
+        <button id="delReminderBtn" class="del-rem-btn kiona" onclick="deleteReminder()">Delete Reminder</button>
     </div>
 
 <script>
-    // Setup Dropdowns
     const hSel = document.getElementById('rem-hours');
     const mSel = document.getElementById('rem-mins');
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
@@ -165,7 +166,7 @@
     }
 
     function deleteEntry(id) {
-        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [].filter(i => i.id !== id);
+        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         localStorage.setItem('pumpLogs', JSON.stringify(history.filter(i => i.id !== id)));
         displayHistory();
     }
@@ -178,18 +179,27 @@
         updateReminderUI();
     }
 
+    function deleteReminder() {
+        localStorage.removeItem('nextPumpTime');
+        updateReminderUI();
+    }
+
     function updateReminderUI() {
         const target = localStorage.getItem('nextPumpTime');
         const statusDiv = document.getElementById('reminderStatus');
+        const delBtn = document.getElementById('delReminderBtn');
         if(target) {
             const date = new Date(parseInt(target));
             statusDiv.innerText = `NEXT PUMP AT ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+            delBtn.style.display = "inline-block";
+        } else {
+            statusDiv.innerText = "";
+            delBtn.style.display = "none";
         }
     }
 
     function clearHistory() { if(confirm("Clear all?")) { localStorage.removeItem('pumpLogs'); displayHistory(); } }
 
-    // Init
     const savedTheme = localStorage.getItem('pumpTheme');
     if(savedTheme) { document.body.setAttribute('data-theme', savedTheme); document.getElementById('themeLabel').innerText = savedTheme === 'light' ? '🌙' : '☀️'; }
     displayHistory();
