@@ -3,93 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpReminder Pro</title>
+    <title>PumpReminder</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #fff0f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; margin-bottom: 20px; }
-        h1 { color: #d81b60; font-size: 1.5rem; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input { width: 80%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; text-align: center; }
-        button { background: #d81b60; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; width: 100%; }
-        button:active { transform: scale(0.98); }
-        #status { margin-top: 20px; font-weight: bold; color: #d81b60; }
-        .history-section { width: 100%; max-width: 350px; text-align: left; }
-        .history-list { list-style: none; padding: 0; }
-        .history-item { background: white; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .clear-btn { background: none; color: #888; border: none; font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 10px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #fff0f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 350px; margin-bottom: 20px; }
+        h1 { color: #d81b60; margin-bottom: 20px; font-size: 1.8rem; }
+        .picker-container { display: flex; justify-content: center; gap: 10px; align-items: center; margin-bottom: 20px; }
+        select { padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 1.1rem; background: #fafafa; cursor: pointer; }
+        .volume-input { width: 60px; padding: 12px; border-radius: 12px; border: 1px solid #ddd; text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
+        button { background: #d81b60; color: white; border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-size: 1.1rem; font-weight: bold; width: 100%; box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3); }
+        button:active { transform: scale(0.97); }
+        #status { margin-top: 20px; font-weight: 600; color: #ad1457; min-height: 1.2em; }
+        .history-section { width: 100%; max-width: 350px; }
+        .history-item { background: white; padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .history-time { font-weight: bold; font-size: 0.9rem; }
+        .history-oz { color: #d81b60; font-weight: bold; }
+        .clear-btn { background: none; color: #999; border: none; font-size: 0.8rem; margin-top: 15px; text-decoration: underline; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>Pump Timer</h1>
-    <label>Interval (Hours):</label>
-    <input type="number" id="interval" value="3" min="1" step="0.5">
     
-    <button onclick="startTimer()">I Just Pumped!</button>
+    <p style="margin-bottom: 10px; font-weight: bold;">Remind me in:</p>
+    <div class="picker-container">
+        <select id="hours"></select> <span>hr</span>
+        <select id="mins"></select> <span>min</span>
+    </div>
+
+    <p style="margin-bottom: 10px; font-weight: bold;">Amount (oz):</p>
+    <input type="number" id="volume" class="volume-input" placeholder="0" step="0.5">
+    
+    <button onclick="logPump()">I Just Pumped!</button>
     <div id="status">Ready</div>
 </div>
 
 <div class="history-section">
-    <h3>Recent History</h3>
-    <ul id="historyList" class="history-list"></ul>
-    <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+    <h3>History</h3>
+    <div id="historyList"></div>
+    <center><button class="clear-btn" onclick="clearData()">Reset App</button></center>
 </div>
 
 <script>
-    // Load history when app starts
+    // Fill the dropdowns with options
+    const hourSelect = document.getElementById('hours');
+    const minSelect = document.getElementById('mins');
+    
+    for(let i=0; i<=12; i++) hourSelect.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
+    for(let i=0; i<60; i+=5) minSelect.innerHTML += `<option value="${i}">${i}</option>`;
+
     window.onload = function() {
         displayHistory();
-        checkPendingTimer();
+        checkActiveTimer();
     };
 
-    function startTimer() {
-        const intervalHours = document.getElementById('interval').value;
-        const now = new Date();
-        const nextTime = new Date(now.getTime() + intervalHours * 60 * 60 * 1000);
-
-        // Save current session to history
-        saveToHistory(now.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }));
-
-        // Save the "Next Pump Time" to storage so it persists if you close the app
-        localStorage.setItem('nextPumpTime', nextTime.getTime());
+    function logPump() {
+        const h = parseInt(document.getElementById('hours').value);
+        const m = parseInt(document.getElementById('mins').value);
+        const vol = document.getElementById('volume').value || 0;
         
-        updateStatusDisplay(nextTime);
-        alert("Session logged! Next reminder set.");
+        if (h === 0 && m === 0) {
+            alert("Please set a reminder time!");
+            return;
+        }
+
+        const now = new Date();
+        const intervalMs = (h * 60 * 60 * 1000) + (m * 60 * 1000);
+        const nextTime = new Date(now.getTime() + intervalMs);
+
+        // Save session
+        const entry = {
+            time: now.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
+            amount: vol
+        };
+        saveToHistory(entry);
+
+        // Save next reminder
+        localStorage.setItem('nextPump', nextTime.getTime());
+        updateUI(nextTime);
+        
+        // Reset volume input
+        document.getElementById('volume').value = "";
     }
 
-    function saveToHistory(timeString) {
-        let history = JSON.parse(localStorage.getItem('pumpHistory')) || [];
-        history.unshift(timeString); // Add to the start of the list
-        if (history.length > 5) history.pop(); // Keep only last 5
-        localStorage.setItem('pumpHistory', JSON.stringify(history));
+    function saveToHistory(entry) {
+        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        history.unshift(entry);
+        if (history.length > 5) history.pop();
+        localStorage.setItem('pumpLogs', JSON.stringify(history));
         displayHistory();
     }
 
     function displayHistory() {
-        const history = JSON.parse(localStorage.getItem('pumpHistory')) || [];
-        const list = document.getElementById('historyList');
-        list.innerHTML = history.map(item => `<li class="history-item"><span>Completed</span> <span>${item}</span></li>`).join('');
+        const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        const container = document.getElementById('historyList');
+        container.innerHTML = history.map(item => `
+            <div class="history-item">
+                <span class="history-time">${item.time}</span>
+                <span class="history-oz">${item.amount} oz</span>
+            </div>
+        `).join('');
     }
 
-    function checkPendingTimer() {
-        const savedTime = localStorage.getItem('nextPumpTime');
-        if (savedTime) {
-            const nextTime = new Date(parseInt(savedTime));
-            if (nextTime > new Date()) {
-                updateStatusDisplay(nextTime);
-            } else {
-                document.getElementById('status').innerText = "Reminder: Time to pump!";
-            }
+    function checkActiveTimer() {
+        const saved = localStorage.getItem('nextPump');
+        if (saved) {
+            const next = new Date(parseInt(saved));
+            if (next > new Date()) updateUI(next);
+            else document.getElementById('status').innerText = "Reminder: Time to pump!";
         }
     }
 
-    function updateStatusDisplay(date) {
+    function updateUI(date) {
         document.getElementById('status').innerText = `Next session: ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
     }
 
-    function clearHistory() {
-        if(confirm("Clear all history?")) {
+    function clearData() {
+        if(confirm("Clear all your data?")) {
             localStorage.clear();
             location.reload();
         }
