@@ -3,78 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpReminder</title>
-    <!-- Importing Montserrat as a backup for Kiona style -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    <title>PumpLog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #ffffff;
-            --card-bg: #ffffff;
             --text-color: #000000;
-            --accent-color: #000000;
             --border-color: #eeeeee;
         }
 
         [data-theme="dark"] {
             --bg-color: #121212;
-            --card-bg: #1e1e1e;
             --text-color: #ffffff;
-            --accent-color: #ffffff;
             --border-color: #333333;
         }
 
         body { 
-            font-family: -apple-system, system-ui, sans-serif; 
+            font-family: 'Montserrat', sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color);
             display: flex; flex-direction: column; align-items: center; 
             padding: 20px; margin: 0; min-height: 100vh;
-            transition: background 0.3s ease;
         }
 
-        /* Kiona-Style Font Styling */
-        .kiona-font {
-            font-family: 'Montserrat', 'Futura', sans-serif;
+        .kiona {
             text-transform: uppercase;
-            letter-spacing: 4px; /* This creates the Kiona look */
-            font-weight: 300;
+            letter-spacing: 5px;
+            font-weight: 200;
         }
 
+        /* Decorative Elements */
         .deco { position: absolute; z-index: -1; opacity: 0.1; font-size: 3rem; pointer-events: none; }
         .light-only { display: block; }
         .dark-only { display: none; }
         [data-theme="dark"] .light-only { display: none; }
         [data-theme="dark"] .dark-only { display: block; }
 
-        .theme-switch { margin-bottom: 20px; align-self: flex-end; font-size: 0.8rem; }
+        .theme-switch { margin-bottom: 30px; align-self: flex-end; font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; }
         
         .card { 
-            background: var(--card-bg); padding: 30px 20px; border-radius: 15px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center; 
-            width: 100%; max-width: 340px; border: 1px solid var(--border-color);
+            text-align: center; width: 100%; max-width: 340px; 
+            padding-bottom: 30px; border-bottom: 1px solid var(--border-color);
         }
 
-        h1 { font-size: 1.4rem; margin-bottom: 30px; color: var(--text-color); }
+        h1 { font-size: 1.4rem; margin-bottom: 40px; }
 
-        .picker-container { display: flex; justify-content: center; gap: 8px; align-items: center; margin-bottom: 25px; }
-        select, input { 
-            padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); 
-            font-size: 1rem; background: var(--bg-color); color: var(--text-color);
+        .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
+
+        input, select { 
+            width: 80%; padding: 12px; border: 1px solid var(--border-color); 
+            background: transparent; color: var(--text-color);
+            font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1rem;
+            border-radius: 0;
         }
 
         button.main-btn { 
-            background: var(--accent-color); color: var(--bg-color); border: none; 
-            padding: 18px; border-radius: 5px; cursor: pointer; 
-            font-size: 0.9rem; width: 100%;
+            background: var(--text-color); color: var(--bg-color); border: none; 
+            padding: 20px; width: 100%; margin-top: 40px; cursor: pointer;
+            transition: opacity 0.2s;
         }
 
-        #status { margin-top: 25px; font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; }
-
-        .history-section { width: 100%; max-width: 340px; margin-top: 40px; }
+        .history-section { width: 100%; max-width: 340px; margin-top: 30px; }
         .history-item { 
-            padding: 15px; border-bottom: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; font-size: 0.9rem;
+            padding: 20px 0; border-bottom: 1px dotted var(--border-color);
+            display: flex; flex-direction: column; gap: 5px;
         }
+        .item-main { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; }
+        .item-sub { font-size: 0.7rem; letter-spacing: 1px; opacity: 0.6; text-transform: uppercase; }
+
     </style>
 </head>
 <body data-theme="light">
@@ -84,75 +80,90 @@
     <div class="deco dark-only" style="top: 10%; right: 15%;">✨</div>
     <div class="deco dark-only" style="bottom: 10%; left: 10%;">⭐</div>
 
-    <div class="theme-switch">
-        <label><input type="checkbox" id="modeToggle" onclick="toggleTheme()"> NIGHT MODE</label>
+    <div class="theme-switch" onclick="toggleTheme()">
+        <span id="themeLabel">NIGHT MODE 🌙</span>
     </div>
 
     <div class="card">
-        <h1 class="kiona-font">Pump Timer</h1>
-        <p style="font-size: 0.8rem; letter-spacing: 1px;">INTERVAL</p>
-        <div class="picker-container">
-            <select id="hours"></select><span>hr</span>
-            <select id="mins"></select><span>min</span>
-        </div>
-        <p style="font-size: 0.8rem; letter-spacing: 1px;">AMOUNT (OZ)</p>
-        <input type="number" id="volume" style="width: 60px; margin-bottom: 25px;" placeholder="0">
-        <button class="main-btn kiona-font" onclick="logPump()">I Just Pumped!</button>
-        <div id="status" class="kiona-font">Ready</div>
+        <h1 class="kiona">Pump Timer</h1>
+
+        <div class="label">Duration (Mins)</div>
+        <input type="number" id="duration" placeholder="e.g. 20" inputmode="numeric">
+
+        <div class="label">Amount (Oz)</div>
+        <input type="number" id="volume" placeholder="e.g. 4.5" step="0.5" inputmode="decimal">
+
+        <button class="main-btn kiona" onclick="logSession()">I Just Pumped!</button>
     </div>
 
     <div class="history-section">
-        <p class="kiona-font" style="font-size: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">History</p>
+        <div class="label" style="margin-top: 0; margin-bottom: 20px;">Recent Sessions</div>
         <div id="historyList"></div>
     </div>
 
 <script>
-    const hSel = document.getElementById('hours');
-    const mSel = document.getElementById('mins');
-    for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
-    for(let i=0; i<60; i+=5) mSel.innerHTML += `<option value="${i}">${i}</option>`;
-
     function toggleTheme() {
-        const isDark = document.getElementById('modeToggle').checked;
-        document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        const body = document.body;
+        const current = body.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', next);
+        document.getElementById('themeLabel').innerText = next === 'light' ? 'NIGHT MODE 🌙' : 'LIGHT MODE ☀️';
+        localStorage.setItem('pumpTheme', next);
     }
 
-    if(localStorage.getItem('theme') === 'dark') {
-        document.getElementById('modeToggle').checked = true;
-        document.body.setAttribute('data-theme', 'dark');
+    // Load saved theme
+    const savedTheme = localStorage.getItem('pumpTheme');
+    if(savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+        document.getElementById('themeLabel').innerText = savedTheme === 'light' ? 'NIGHT MODE 🌙' : 'LIGHT MODE ☀️';
     }
 
-    function logPump() {
-        const h = parseInt(hSel.value);
-        const m = parseInt(mSel.value);
-        const vol = document.getElementById('volume').value || 0;
+    function logSession() {
+        const duration = document.getElementById('duration').value;
+        const volume = document.getElementById('volume').value;
+
+        if(!duration || !volume) {
+            alert("Please enter both duration and amount.");
+            return;
+        }
+
         const now = new Date();
-        const next = new Date(now.getTime() + (h*3600000) + (m*60000));
-        const entry = { time: now.toLocaleString([], {hour:'2-digit', minute:'2-digit'}), amount: vol };
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+
+        const entry = {
+            date: dateStr,
+            time: timeStr,
+            duration: duration,
+            amount: volume
+        };
+
         let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         history.unshift(entry);
-        localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0,5)));
-        localStorage.setItem('nextPump', next.getTime());
-        displayHistory();
-        updateUI(next);
+        localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0, 10)));
+
+        // Reset fields
+        document.getElementById('duration').value = "";
         document.getElementById('volume').value = "";
+        
+        displayHistory();
     }
 
     function displayHistory() {
         const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
-        document.getElementById('historyList').innerHTML = history.map(item => `
-            <div class="history-item"><span>${item.time}</span><b>${item.amount} OZ</b></div>
+        const list = document.getElementById('historyList');
+        list.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="item-main">
+                    <span>${item.amount} OZ</span>
+                    <span>${item.duration} MINS</span>
+                </div>
+                <div class="item-sub">${item.date} • ${item.time}</div>
+            </div>
         `).join('');
     }
 
-    function updateUI(date) {
-        document.getElementById('status').innerText = `Next: ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
-    }
-
     displayHistory();
-    const saved = localStorage.getItem('nextPump');
-    if(saved && new Date(parseInt(saved)) > new Date()) updateUI(new Date(parseInt(saved)));
 </script>
 </body>
 </html>
