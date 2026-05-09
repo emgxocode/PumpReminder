@@ -5,127 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PumpReminder</title>
     <style>
-        body { font-family: -apple-system, system-ui, sans-serif; background-color: #fff0f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 350px; margin-bottom: 20px; }
-        h1 { color: #d81b60; margin-bottom: 20px; font-size: 1.8rem; }
-        .picker-container { display: flex; justify-content: center; gap: 10px; align-items: center; margin-bottom: 20px; }
-        select { padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 1.1rem; background: #fafafa; cursor: pointer; }
-        .volume-input { width: 60px; padding: 12px; border-radius: 12px; border: 1px solid #ddd; text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
-        button { background: #d81b60; color: white; border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-size: 1.1rem; font-weight: bold; width: 100%; box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3); }
-        button:active { transform: scale(0.97); }
-        #status { margin-top: 20px; font-weight: 600; color: #ad1457; min-height: 1.2em; }
-        .history-section { width: 100%; max-width: 350px; }
-        .history-item { background: white; padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .history-time { font-weight: bold; font-size: 0.9rem; }
-        .history-oz { color: #d81b60; font-weight: bold; }
-        .clear-btn { background: none; color: #999; border: none; font-size: 0.8rem; margin-top: 15px; text-decoration: underline; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-<div class="card">
-    <h1>Pump Timer</h1>
-    
-    <p style="margin-bottom: 10px; font-weight: bold;">Remind me in:</p>
-    <div class="picker-container">
-        <select id="hours"></select> <span>hr</span>
-        <select id="mins"></select> <span>min</span>
-    </div>
-
-    <p style="margin-bottom: 10px; font-weight: bold;">Amount (oz):</p>
-    <input type="number" id="volume" class="volume-input" placeholder="0" step="0.5">
-    
-    <button onclick="logPump()">I Just Pumped!</button>
-    <div id="status">Ready</div>
-</div>
-
-<div class="history-section">
-    <h3>History</h3>
-    <div id="historyList"></div>
-    <center><button class="clear-btn" onclick="clearData()">Reset App</button></center>
-</div>
-
-<script>
-    // Fill the dropdowns with options
-    const hourSelect = document.getElementById('hours');
-    const minSelect = document.getElementById('mins');
-    
-    for(let i=0; i<=12; i++) hourSelect.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
-    for(let i=0; i<60; i+=5) minSelect.innerHTML += `<option value="${i}">${i}</option>`;
-
-    window.onload = function() {
-        displayHistory();
-        checkActiveTimer();
-    };
-
-    function logPump() {
-        const h = parseInt(document.getElementById('hours').value);
-        const m = parseInt(document.getElementById('mins').value);
-        const vol = document.getElementById('volume').value || 0;
-        
-        if (h === 0 && m === 0) {
-            alert("Please set a reminder time!");
-            return;
+        :root {
+            --bg-color: #ffffff;
+            --card-bg: #f9f9f9;
+            --text-color: #333333;
+            --accent-color: #d81b60;
+            --border-color: #eeeeee;
         }
 
-        const now = new Date();
-        const intervalMs = (h * 60 * 60 * 1000) + (m * 60 * 1000);
-        const nextTime = new Date(now.getTime() + intervalMs);
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-color: #ff4081;
+            --border-color: #333333;
+        }
 
-        // Save session
-        const entry = {
-            time: now.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }),
-            amount: vol
-        };
-        saveToHistory(entry);
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; margin: 0; min-height: 100vh;
+            transition: background 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-        // Save next reminder
-        localStorage.setItem('nextPump', nextTime.getTime());
-        updateUI(nextTime);
+        /* Background Icons (Sun/Stars) */
+        .deco { position: absolute; z-index: -1; opacity: 0.1; font-size: 3rem; pointer-events: none; }
+        .light-only { display: block; }
+        .dark-only { display: none; }
+        [data-theme="dark"] .light-only { display: none; }
+        [data-theme="dark"] .dark-only { display: block; }
+
+        /* Toggle Switch */
+        .theme-switch { margin-bottom: 20px; align-self: flex-end; }
         
-        // Reset volume input
-        document.getElementById('volume').value = "";
+        .card { 
+            background: var(--card-bg); padding: 25px; border-radius: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; 
+            width: 100%; max-width: 350px; border: 1px solid var(--border-color);
+        }
+
+        h1 { color: var(--accent-color); margin-bottom: 20px; font-size: 1.6rem; }
+        .picker-container { display: flex; justify-content: center; gap: 10px; align-items: center; margin-bottom: 20px; }
+        
+        select, input { 
+            padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); 
+            font-size: 1.1rem; background: var(--bg-color); color: var(--text-color);
+        }
+
+        button.main-btn { 
+            background: var(--accent-color); color: white; border: none; 
+            padding: 18px; border-radius: 20px; cursor: pointer; 
+            font-size: 1.1rem; font-weight: bold; width: 100%;
+        }
+
+        #status { margin-top: 20px; font-weight: 600; color: var(--accent-color); }
+
+        .history-section { width: 100%; max-width: 350px; margin-top: 30px; }
+        .history-item { 
+            background: var(--card-bg); padding: 12px 18px; border-radius: 15px; 
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- Decorative Outlines -->
+    <div class="deco light-only" style="top: 10%; left: 5%;">☀️</div>
+    <div class="deco light-only" style="bottom: 20%; right: 10%;">☀️</div>
+    <div class="deco dark-only" style="top: 15%; right: 15%;">✨</div>
+    <div class="deco dark-only" style="bottom: 10%; left: 10%;">⭐</div>
+    <div class="deco dark-only" style="top: 40%; left: 5%;">✨</div>
+
+    <div class="theme-switch">
+        <label>
+            <input type="checkbox" id="modeToggle" onclick="toggleTheme()"> 🌙 Night Mode
+        </label>
+    </div>
+
+    <div class="card">
+        <h1>Pump Timer</h1>
+        <p>Interval:</p>
+        <div class="picker-container">
+            <select id="hours"></select><span>hr</span>
+            <select id="mins"></select><span>min</span>
+        </div>
+        <p>Amount (oz):</p>
+        <input type="number" id="volume" style="width: 80px; margin-bottom: 20px;" placeholder="0">
+        <button class="main-btn" onclick="logPump()">I Just Pumped!</button>
+        <div id="status">Ready</div>
+    </div>
+
+    <div class="history-section">
+        <h3>History</h3>
+        <div id="historyList"></div>
+    </div>
+
+<script>
+    // Dropdown Setup
+    const hSel = document.getElementById('hours');
+    const mSel = document.getElementById('mins');
+    for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
+    for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}</option>`;
+
+    function toggleTheme() {
+        const body = document.body;
+        const isDark = document.getElementById('modeToggle').checked;
+        body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
-    function saveToHistory(entry) {
+    // Load Theme Preference
+    if(localStorage.getItem('theme') === 'dark') {
+        document.getElementById('modeToggle').checked = true;
+        document.body.setAttribute('data-theme', 'dark');
+    }
+
+    function logPump() {
+        const h = parseInt(hSel.value);
+        const m = parseInt(mSel.value);
+        const vol = document.getElementById('volume').value || 0;
+        const now = new Date();
+        const next = new Date(now.getTime() + (h*3600000) + (m*60000));
+
+        const entry = { time: now.toLocaleString([], {hour:'2-digit', minute:'2-digit'}), amount: vol };
         let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         history.unshift(entry);
-        if (history.length > 5) history.pop();
-        localStorage.setItem('pumpLogs', JSON.stringify(history));
+        localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0,5)));
+        localStorage.setItem('nextPump', next.getTime());
+        
         displayHistory();
+        updateUI(next);
+        document.getElementById('volume').value = "";
     }
 
     function displayHistory() {
         const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
-        const container = document.getElementById('historyList');
-        container.innerHTML = history.map(item => `
-            <div class="history-item">
-                <span class="history-time">${item.time}</span>
-                <span class="history-oz">${item.amount} oz</span>
-            </div>
+        document.getElementById('historyList').innerHTML = history.map(item => `
+            <div class="history-item"><span>${item.time}</span><b>${item.amount} oz</b></div>
         `).join('');
     }
 
-    function checkActiveTimer() {
-        const saved = localStorage.getItem('nextPump');
-        if (saved) {
-            const next = new Date(parseInt(saved));
-            if (next > new Date()) updateUI(next);
-            else document.getElementById('status').innerText = "Reminder: Time to pump!";
-        }
-    }
-
     function updateUI(date) {
-        document.getElementById('status').innerText = `Next session: ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        document.getElementById('status').innerText = `Next: ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
     }
 
-    function clearData() {
-        if(confirm("Clear all your data?")) {
-            localStorage.clear();
-            location.reload();
-        }
-    }
+    // Initialize
+    displayHistory();
+    const saved = localStorage.getItem('nextPump');
+    if(saved && new Date(parseInt(saved)) > new Date()) updateUI(new Date(parseInt(saved)));
 </script>
-
 </body>
 </html>
