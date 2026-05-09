@@ -7,9 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Softened Light Mode */
-            --bg-color: #f9f7f2; /* Elegant Off-White */
-            --text-color: #2d2d2d; /* Softer Black */
+            --bg-color: #f9f7f2; 
+            --text-color: #2d2d2d; 
             --border-color: #e0ddd5; 
             --delete-color: #d9534f;
             --toggle-bg: #e0ddd5;
@@ -36,13 +35,14 @@
 
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
 
-        .nav-bar { width: 100%; max-width: 340px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-item { font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
+        /* Larger Navigation Bar */
+        .nav-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; margin-top: 10px; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
         .nav-item.active { opacity: 1; font-weight: 600; }
 
-        /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        /* Larger Toggle Switch */
+        .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer;
@@ -50,20 +50,20 @@
             background-color: var(--toggle-bg);
             transition: .4s; border-radius: 34px;
             display: flex; align-items: center; justify-content: space-around;
-            font-size: 10px;
+            font-size: 14px;
         }
         .slider:before {
             position: absolute; content: "";
-            height: 18px; width: 18px;
+            height: 24px; width: 24px;
             left: 4px; bottom: 4px;
             background-color: white;
             transition: .4s; border-radius: 50%;
             z-index: 2;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        input:checked + .slider:before { transform: translateX(24px); }
+        input:checked + .slider:before { transform: translateX(28px); }
 
-        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 30px; opacity: 0.7; text-align: center; }
+        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 35px; opacity: 0.7; text-align: center; }
         .brand-logo span { font-weight: 600; }
 
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
