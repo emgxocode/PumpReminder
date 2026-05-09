@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PumpReminder Pro</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #fff0f5; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; margin-bottom: 20px; }
+        h1 { color: #d81b60; font-size: 1.5rem; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        input { width: 80%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; text-align: center; }
+        button { background: #d81b60; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; width: 100%; }
+        button:active { transform: scale(0.98); }
+        #status { margin-top: 20px; font-weight: bold; color: #d81b60; }
+        .history-section { width: 100%; max-width: 350px; text-align: left; }
+        .history-list { list-style: none; padding: 0; }
+        .history-item { background: white; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .clear-btn { background: none; color: #888; border: none; font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Pump Timer</h1>
+    <label>Interval (Hours):</label>
+    <input type="number" id="interval" value="3" min="1" step="0.5">
+    
+    <button onclick="startTimer()">I Just Pumped!</button>
+    <div id="status">Ready</div>
+</div>
+
+<div class="history-section">
+    <h3>Recent History</h3>
+    <ul id="historyList" class="history-list"></ul>
+    <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+</div>
+
+<script>
+    // Load history when app starts
+    window.onload = function() {
+        displayHistory();
+        checkPendingTimer();
+    };
+
+    function startTimer() {
+        const intervalHours = document.getElementById('interval').value;
+        const now = new Date();
+        const nextTime = new Date(now.getTime() + intervalHours * 60 * 60 * 1000);
+
+        // Save current session to history
+        saveToHistory(now.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }));
+
+        // Save the "Next Pump Time" to storage so it persists if you close the app
+        localStorage.setItem('nextPumpTime', nextTime.getTime());
+        
+        updateStatusDisplay(nextTime);
+        alert("Session logged! Next reminder set.");
+    }
+
+    function saveToHistory(timeString) {
+        let history = JSON.parse(localStorage.getItem('pumpHistory')) || [];
+        history.unshift(timeString); // Add to the start of the list
+        if (history.length > 5) history.pop(); // Keep only last 5
+        localStorage.setItem('pumpHistory', JSON.stringify(history));
+        displayHistory();
+    }
+
+    function displayHistory() {
+        const history = JSON.parse(localStorage.getItem('pumpHistory')) || [];
+        const list = document.getElementById('historyList');
+        list.innerHTML = history.map(item => `<li class="history-item"><span>Completed</span> <span>${item}</span></li>`).join('');
+    }
+
+    function checkPendingTimer() {
+        const savedTime = localStorage.getItem('nextPumpTime');
+        if (savedTime) {
+            const nextTime = new Date(parseInt(savedTime));
+            if (nextTime > new Date()) {
+                updateStatusDisplay(nextTime);
+            } else {
+                document.getElementById('status').innerText = "Reminder: Time to pump!";
+            }
+        }
+    }
+
+    function updateStatusDisplay(date) {
+        document.getElementById('status').innerText = `Next session: ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+    }
+
+    function clearHistory() {
+        if(confirm("Clear all history?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
