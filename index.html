@@ -65,7 +65,7 @@
 
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; border-radius: 2px; }
         
-        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 15px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
+        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
 
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
@@ -93,24 +93,19 @@
     <div class="brand-logo">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <!-- ONBOARDING PAGE -->
     <div id="page-onboarding" class="page active">
         <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
         <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
-        
         <div class="label">Your Name</div>
         <input type="text" id="user-name" placeholder="E.g. Mama">
-        
         <div id="baby-inputs-container">
             <div class="label">Baby's Name</div>
             <input type="text" class="baby-name-input" placeholder="E.g. Leo">
         </div>
-        
         <button class="secondary-btn kiona" onclick="addBabyInput()">+ Add Another Baby</button>
         <button class="main-btn kiona" onclick="saveProfile()">Start Logging</button>
     </div>
 
-    <!-- LOG PAGE -->
     <div id="page-log" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Pump Log</h1>
         <div class="label">Time Pumped (Mins)</div>
@@ -125,7 +120,6 @@
         </div>
     </div>
 
-    <!-- REMINDER PAGE -->
     <div id="page-remind" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Reminder</h1>
         <div class="label">Remind me in</div>
@@ -144,7 +138,6 @@
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
     for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}</option>`;
 
-    // --- Profile Logic ---
     function addBabyInput() {
         const container = document.getElementById('baby-inputs-container');
         const label = document.createElement('div');
@@ -165,9 +158,7 @@
         babyInputs.forEach(input => {
             if(input.value.trim() !== "") babies.push(input.value.trim());
         });
-
-        if(!uName || babies.length === 0) return alert("Please fill in your name and at least one baby!");
-        
+        if(!uName || babies.length === 0) { alert("Please fill in your name and at least one baby!"); return; }
         localStorage.setItem('sb_userProfile', JSON.stringify({user: uName, babies: babies}));
         initApp();
     }
@@ -177,7 +168,6 @@
         if(profile) {
             document.getElementById('page-onboarding').classList.remove('active');
             document.getElementById('main-nav').style.display = 'flex';
-            
             const babyText = profile.babies.join(' & ');
             document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${babyText}`;
             showPage('log');
@@ -260,4 +250,5 @@
         }
     }
 
-    function clearHistory()
+    function clearHistory() { 
+        if(confirm("Are you sure you want to clear your entire history? This cannot be undone."))
