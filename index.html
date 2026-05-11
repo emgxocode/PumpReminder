@@ -33,7 +33,7 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* --- SPLASH SCREEN MOTION --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
@@ -53,12 +53,8 @@
         }
         .splash-logo span { font-weight: 600; }
 
-        @keyframes splashFadeIn { 
-            to { opacity: 0.5; transform: translateY(0); } 
-        }
-        @keyframes splashSlideUp { 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes splashFadeIn { to { opacity: 0.5; transform: translateY(0); } }
+        @keyframes splashSlideUp { to { opacity: 1; transform: translateY(0); } }
         .splash-hidden { opacity: 0 !important; pointer-events: none; }
 
         /* --- APP STYLES --- */
@@ -92,12 +88,13 @@
 </head>
 <body data-theme="light">
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen Overlay -->
     <div id="splash-screen">
         <div class="splash-title">PUMP LOG</div>
         <div class="splash-logo">Snoozy<span>Bubba</span></div>
     </div>
 
+    <!-- App Container (Hidden during splash via logic) -->
     <div id="main-nav" class="nav-bar" style="display: none;">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
@@ -109,9 +106,10 @@
         </label>
     </div>
 
-    <div class="brand-logo">Snoozy<span>Bubba</span></div>
+    <div id="app-brand" class="brand-logo" style="display: none;">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
+    <!-- Pages -->
     <div id="page-onboarding" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
         <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
@@ -152,15 +150,39 @@
     </div>
 
 <script>
-    // FIX: Forced 2-second splash timer
-    setTimeout(() => {
-        document.getElementById('splash-screen').classList.add('splash-hidden');
-    }, 2200);
-
     const hSel = document.getElementById('rem-hours');
     const mSel = document.getElementById('rem-mins');
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
     for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}</option>`;
+
+    // --- APP INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+        // Run splash timer
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('splash-hidden');
+            setTimeout(() => splash.remove(), 600); // Fully remove from DOM
+            
+            // Show main brand and decide which page to show
+            document.getElementById('app-brand').style.display = 'block';
+            initApp(); 
+        }, 2200);
+    });
+
+    function initApp() {
+        const profile = JSON.parse(localStorage.getItem('sb_userProfile'));
+        if(profile) {
+            document.getElementById('page-onboarding').classList.remove('active');
+            document.getElementById('main-nav').style.display = 'flex';
+            const babyText = profile.babies.join(' & ');
+            document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${babyText}`;
+            showPage('log');
+        } else {
+            showPage('onboarding');
+        }
+        displayHistory();
+        updateReminderUI();
+    }
 
     function addBabyInput() {
         const container = document.getElementById('baby-inputs-container');
@@ -181,24 +203,13 @@
         initApp();
     }
 
-    function initApp() {
-        const profile = JSON.parse(localStorage.getItem('sb_userProfile'));
-        if(profile) {
-            document.getElementById('page-onboarding').classList.remove('active');
-            document.getElementById('main-nav').style.display = 'flex';
-            const babyText = profile.babies.join(' & ');
-            document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${babyText}`;
-            showPage('log');
-        } else {
-            document.getElementById('page-onboarding').classList.add('active');
-        }
-    }
-
     function showPage(pageName) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById('page-' + pageName).classList.add('active');
-        document.getElementById('btn-' + pageName).classList.add('active');
+        const targetPage = document.getElementById('page-' + pageName);
+        if(targetPage) targetPage.classList.add('active');
+        const targetBtn = document.getElementById('btn-' + pageName);
+        if(targetBtn) targetBtn.classList.add('active');
     }
 
     function toggleTheme() {
@@ -212,14 +223,4 @@
         const vol = document.getElementById('volume').value;
         if(!dur || !vol) return;
         const now = new Date();
-        const entry = { id: Date.now(), date: now.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'}), time: now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), duration: dur, amount: vol };
-        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
-        history.unshift(entry);
-        localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0, 10)));
-        document.getElementById('duration').value = ""; document.getElementById('volume').value = "";
-        displayHistory();
-    }
-
-    function displayHistory() {
-        const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
-        document.getElementById('historyList').innerHTML = history.map(item => `
+        const entry = { id: Date.now(), date: now.toLocaleDateString([], {weekday:'short', month:'short',
