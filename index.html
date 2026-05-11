@@ -33,65 +33,45 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* --- SPLASH SCREEN --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; transition: opacity 0.6s ease;
-        }
-        .splash-title { 
-            font-family: 'Montserrat', sans-serif; text-transform: uppercase; 
-            letter-spacing: 8px; font-weight: 200; font-size: 1.1rem;
-            opacity: 0.5; margin-bottom: 10px;
-        }
-        .splash-logo { 
-            font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.8rem; 
-            letter-spacing: -0.5px; margin-bottom: 50px;
-        }
-        .splash-logo span { font-weight: 600; }
-        
-        .enter-btn {
-            background: none; border: 1px solid var(--text-color);
-            color: var(--text-color); padding: 15px 40px;
-            text-transform: uppercase; letter-spacing: 4px; font-size: 0.7rem;
-            cursor: pointer; opacity: 0.8; transition: 0.3s;
-        }
-        .enter-btn:hover { opacity: 1; letter-spacing: 6px; }
-
-        .splash-hidden { opacity: 0 !important; pointer-events: none; }
-
-        /* --- APP STYLES --- */
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
+
         .nav-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; margin-top: 10px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
         .nav-item.active { opacity: 1; font-weight: 600; }
-        
+
         .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-around; font-size: 14px; }
         .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         input:checked + .slider:before { transform: translateX(28px); }
-        
+
         .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; text-align: center; }
         .brand-logo span { font-weight: 600; }
-        .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; max-width: 300px; line-height: 1.5; }
         
+        .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; max-width: 300px; line-height: 1.5; }
+
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
-        
+
         .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
-        input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.2rem; border-radius: 0; outline: none; }
-        
+
+        input, select { 
+            width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color);
+            background: var(--input-bg); color: var(--text-color);
+            font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.2rem;
+            border-radius: 0; outline: none;
+        }
+
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; border-radius: 2px; }
-        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
         
+        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
+
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; letter-spacing: 1.5px; opacity: 0.5; text-transform: uppercase; }
         .del-text { color: var(--delete-color); font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; font-weight: 600; padding: 5px; }
-        
+
         .footer { margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%; }
         .clear-btn { background: none; border: none; color: var(--text-color); opacity: 0.3; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; }
         .del-rem-btn { background: none; border: none; color: var(--delete-color); font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; font-weight: 600; margin-top: 20px; display: none; }
@@ -99,14 +79,6 @@
 </head>
 <body data-theme="light">
 
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-        <div class="splash-title">PUMP LOG</div>
-        <div class="splash-logo">Snoozy<span>Bubba</span></div>
-        <button class="enter-btn" onclick="enterApp()">Enter</button>
-    </div>
-
-    <!-- App Content -->
     <div id="main-nav" class="nav-bar" style="display: none;">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
@@ -118,11 +90,10 @@
         </label>
     </div>
 
-    <div id="app-brand" class="brand-logo" style="display: none;">Snoozy<span>Bubba</span></div>
+    <div class="brand-logo">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <!-- ONBOARDING -->
-    <div id="page-onboarding" class="page">
+    <div id="page-onboarding" class="page active">
         <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
         <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
         <div class="label">Your Name</div>
@@ -135,7 +106,6 @@
         <button class="main-btn kiona" onclick="saveProfile()">Start Logging</button>
     </div>
 
-    <!-- LOG PAGE -->
     <div id="page-log" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Pump Log</h1>
         <div class="label">Time Pumped (Mins)</div>
@@ -150,7 +120,6 @@
         </div>
     </div>
 
-    <!-- REMINDER PAGE -->
     <div id="page-remind" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Reminder</h1>
         <div class="label">Remind me in</div>
@@ -169,16 +138,29 @@
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
     for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}</option>`;
 
-    // --- TRANSITION LOGIC ---
-    function enterApp() {
-        const splash = document.getElementById('splash-screen');
-        splash.classList.add('splash-hidden');
-        
-        setTimeout(() => {
-            splash.remove(); // Fully remove so it doesn't block clicks
-            document.getElementById('app-brand').style.display = 'block';
-            initApp();
-        }, 600);
+    function addBabyInput() {
+        const container = document.getElementById('baby-inputs-container');
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.innerText = "Baby's Name";
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'baby-name-input';
+        input.placeholder = "Next Baby's Name";
+        container.appendChild(label);
+        container.appendChild(input);
+    }
+
+    function saveProfile() {
+        const uName = document.getElementById('user-name').value;
+        const babyInputs = document.querySelectorAll('.baby-name-input');
+        let babies = [];
+        babyInputs.forEach(input => {
+            if(input.value.trim() !== "") babies.push(input.value.trim());
+        });
+        if(!uName || babies.length === 0) { alert("Please fill in your name and at least one baby!"); return; }
+        localStorage.setItem('sb_userProfile', JSON.stringify({user: uName, babies: babies}));
+        initApp();
     }
 
     function initApp() {
@@ -189,40 +171,20 @@
             const babyText = profile.babies.join(' & ');
             document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${babyText}`;
             showPage('log');
-        } else {
-            showPage('onboarding');
         }
-        displayHistory();
-        updateReminderUI();
     }
 
-    // --- APP CORE FUNCTIONS ---
     function showPage(pageName) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        const target = document.getElementById('page-' + pageName);
-        if(target) target.classList.add('active');
-        const btn = document.getElementById('btn-' + pageName);
-        if(btn) btn.classList.add('active');
+        document.getElementById('page-' + pageName).classList.add('active');
+        document.getElementById('btn-' + pageName).classList.add('active');
     }
 
-    function addBabyInput() {
-        const container = document.getElementById('baby-inputs-container');
-        const label = document.createElement('div');
-        label.className = 'label'; label.innerText = "Baby's Name";
-        const input = document.createElement('input');
-        input.className = 'baby-name-input'; input.placeholder = "Next Baby's Name";
-        container.appendChild(label); container.appendChild(input);
-    }
-
-    function saveProfile() {
-        const uName = document.getElementById('user-name').value;
-        const bInputs = document.querySelectorAll('.baby-name-input');
-        let babies = [];
-        bInputs.forEach(i => { if(i.value.trim()) babies.push(i.value.trim()); });
-        if(!uName || babies.length === 0) return alert("Please fill in names!");
-        localStorage.setItem('sb_userProfile', JSON.stringify({user: uName, babies: babies}));
-        initApp();
+    function toggleTheme() {
+        const theme = document.getElementById('themeToggle').checked ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('pumpTheme', theme);
     }
 
     function logSession() {
@@ -234,3 +196,59 @@
         let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         history.unshift(entry);
         localStorage.setItem('pumpLogs', JSON.stringify(history.slice(0, 10)));
+        document.getElementById('duration').value = ""; document.getElementById('volume').value = "";
+        displayHistory();
+    }
+
+    function displayHistory() {
+        const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        document.getElementById('historyList').innerHTML = history.map(item => `
+            <div class="history-item">
+                <div style="display:flex; flex-direction:column; gap:4px; flex-grow:1; text-align: left;">
+                    <span class="val-main">${item.amount} OZ</span>
+                    <span class="val-sub">${item.date} • ${item.time}</span>
+                </div>
+                <div style="text-align:right; margin-right:15px;"><span class="val-main">${item.duration} MIN</span></div>
+                <div class="del-text" onclick="deleteEntry(${item.id})">Delete</div>
+            </div>`).join('');
+    }
+
+    function deleteEntry(id) {
+        if(confirm("Are you sure you want to delete this log?")) {
+            let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+            localStorage.setItem('pumpLogs', JSON.stringify(history.filter(i => i.id !== id)));
+            displayHistory();
+        }
+    }
+
+    function setReminder() {
+        const h = parseInt(hSel.value);
+        const m = parseInt(mSel.value);
+        const targetTime = Date.now() + (h * 3600000) + (m * 60000);
+        localStorage.setItem('nextPumpTime', targetTime);
+        updateReminderUI();
+    }
+
+    function deleteReminder() {
+        if(confirm("Are you sure you want to delete your reminder?")) {
+            localStorage.removeItem('nextPumpTime');
+            updateReminderUI();
+        }
+    }
+
+    function updateReminderUI() {
+        const target = localStorage.getItem('nextPumpTime');
+        const statusDiv = document.getElementById('reminderStatus');
+        const delBtn = document.getElementById('delReminderBtn');
+        if(target) {
+            const date = new Date(parseInt(target));
+            statusDiv.innerText = `NEXT PUMP AT ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+            delBtn.style.display = "inline-block";
+        } else {
+            statusDiv.innerText = "";
+            delBtn.style.display = "none";
+        }
+    }
+
+    function clearHistory() { 
+        if(confirm("Are you sure you want to clear your entire history? This cannot be undone."))
