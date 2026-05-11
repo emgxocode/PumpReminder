@@ -31,8 +31,34 @@
             display: flex; flex-direction: column; align-items: center; 
             padding: 20px; margin: 0; min-height: 100vh;
             transition: background 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
         }
 
+        /* --- Splash Screen Styles --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .splash-title { 
+            font-family: 'Montserrat', sans-serif; text-transform: uppercase; 
+            letter-spacing: 8px; font-weight: 200; font-size: 1.2rem;
+            opacity: 0; transform: translateY(10px);
+            animation: fadeIn 1s forwards 0.3s;
+        }
+        .splash-logo { 
+            font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.8rem; 
+            letter-spacing: -0.5px; opacity: 0; margin-top: 15px;
+            animation: slideUp 1s forwards 1s;
+        }
+        .splash-logo span { font-weight: 600; }
+
+        @keyframes fadeIn { to { opacity: 0.6; transform: translateY(0); } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        .fade-out { opacity: 0; visibility: hidden; }
+
+        /* --- App Styles --- */
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
 
         .nav-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; margin-top: 10px; }
@@ -64,7 +90,6 @@
         }
 
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; border-radius: 2px; }
-        
         .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
 
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -78,6 +103,12 @@
     </style>
 </head>
 <body data-theme="light">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-title">PUMP LOG</div>
+        <div class="splash-logo">Snoozy<span>Bubba</span></div>
+    </div>
 
     <div id="main-nav" class="nav-bar" style="display: none;">
         <div class="nav-links kiona">
@@ -93,7 +124,7 @@
     <div class="brand-logo">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <div id="page-onboarding" class="page active">
+    <div id="page-onboarding" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
         <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
         <div class="label">Your Name</div>
@@ -133,6 +164,13 @@
     </div>
 
 <script>
+    // Splash Screen Handler
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('splash-screen').classList.add('fade-out');
+        }, 2800); // Shows splash for ~2.8 seconds
+    });
+
     const hSel = document.getElementById('rem-hours');
     const mSel = document.getElementById('rem-mins');
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
@@ -141,23 +179,17 @@
     function addBabyInput() {
         const container = document.getElementById('baby-inputs-container');
         const label = document.createElement('div');
-        label.className = 'label';
-        label.innerText = "Baby's Name";
+        label.className = 'label'; label.innerText = "Baby's Name";
         const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'baby-name-input';
-        input.placeholder = "Next Baby's Name";
-        container.appendChild(label);
-        container.appendChild(input);
+        input.type = 'text'; input.className = 'baby-name-input'; input.placeholder = "Next Baby's Name";
+        container.appendChild(label); container.appendChild(input);
     }
 
     function saveProfile() {
         const uName = document.getElementById('user-name').value;
         const babyInputs = document.querySelectorAll('.baby-name-input');
         let babies = [];
-        babyInputs.forEach(input => {
-            if(input.value.trim() !== "") babies.push(input.value.trim());
-        });
+        babyInputs.forEach(input => { if(input.value.trim() !== "") babies.push(input.value.trim()); });
         if(!uName || babies.length === 0) { alert("Please fill in your name and at least one baby!"); return; }
         localStorage.setItem('sb_userProfile', JSON.stringify({user: uName, babies: babies}));
         initApp();
@@ -171,6 +203,8 @@
             const babyText = profile.babies.join(' & ');
             document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${babyText}`;
             showPage('log');
+        } else {
+            document.getElementById('page-onboarding').classList.add('active');
         }
     }
 
@@ -203,52 +237,4 @@
     function displayHistory() {
         const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
         document.getElementById('historyList').innerHTML = history.map(item => `
-            <div class="history-item">
-                <div style="display:flex; flex-direction:column; gap:4px; flex-grow:1; text-align: left;">
-                    <span class="val-main">${item.amount} OZ</span>
-                    <span class="val-sub">${item.date} • ${item.time}</span>
-                </div>
-                <div style="text-align:right; margin-right:15px;"><span class="val-main">${item.duration} MIN</span></div>
-                <div class="del-text" onclick="deleteEntry(${item.id})">Delete</div>
-            </div>`).join('');
-    }
-
-    function deleteEntry(id) {
-        if(confirm("Are you sure you want to delete this log?")) {
-            let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
-            localStorage.setItem('pumpLogs', JSON.stringify(history.filter(i => i.id !== id)));
-            displayHistory();
-        }
-    }
-
-    function setReminder() {
-        const h = parseInt(hSel.value);
-        const m = parseInt(mSel.value);
-        const targetTime = Date.now() + (h * 3600000) + (m * 60000);
-        localStorage.setItem('nextPumpTime', targetTime);
-        updateReminderUI();
-    }
-
-    function deleteReminder() {
-        if(confirm("Are you sure you want to delete your reminder?")) {
-            localStorage.removeItem('nextPumpTime');
-            updateReminderUI();
-        }
-    }
-
-    function updateReminderUI() {
-        const target = localStorage.getItem('nextPumpTime');
-        const statusDiv = document.getElementById('reminderStatus');
-        const delBtn = document.getElementById('delReminderBtn');
-        if(target) {
-            const date = new Date(parseInt(target));
-            statusDiv.innerText = `NEXT PUMP AT ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
-            delBtn.style.display = "inline-block";
-        } else {
-            statusDiv.innerText = "";
-            delBtn.style.display = "none";
-        }
-    }
-
-    function clearHistory() { 
-        if(confirm("Are you sure you want to clear your entire history? This cannot be undone."))
+            <div class="
