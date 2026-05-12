@@ -28,21 +28,26 @@
             z-index: 10000; transition: opacity 0.8s ease;
         }
         .splash-text { 
-            font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; 
-            opacity: 0; animation: fadeInOut 2s forwards; font-weight: 300;
+            font-size: 2.2rem; letter-spacing: 8px; text-transform: uppercase; 
+            font-weight: 200; opacity: 0; animation: fadeInOut 2.2s forwards;
+            text-align: center; margin-bottom: 5px;
+        }
+        .splash-sub {
+            font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+            opacity: 0; animation: fadeInOut 2.2s forwards; animation-delay: 0.4s;
         }
         .splash-logo { 
-            font-size: 1.8rem; letter-spacing: -0.5px; font-weight: 300;
-            opacity: 0; animation: fadeInOut 2s forwards; animation-delay: 0.8s;
-            margin-top: 10px;
+            font-size: 1.1rem; letter-spacing: -0.5px; font-weight: 300;
+            opacity: 0; animation: fadeInOut 2.2s forwards; animation-delay: 0.8s;
+            margin-top: 5px;
         }
         .splash-logo span { font-weight: 600; }
         
         @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(10px); }
-            30% { opacity: 0.6; transform: translateY(0); }
-            70% { opacity: 0.6; }
-            100% { opacity: 0; }
+            0% { opacity: 0; transform: translateY(15px); }
+            35% { opacity: 0.8; transform: translateY(0); }
+            75% { opacity: 0.8; }
+            100% { opacity: 0; transform: translateY(-5px); }
         }
 
         /* --- APP CONTENT --- */
@@ -80,10 +85,11 @@
     <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-text">Pump Log</div>
+        <div class="splash-sub">By</div>
         <div class="splash-logo">Snoozy<span>Bubba</span></div>
     </div>
 
-    <!-- App Content (Hidden until splash finishes) -->
+    <!-- App Content -->
     <div id="main-nav" class="nav-bar">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
@@ -98,18 +104,16 @@
     <div id="app-logo" class="brand-logo" style="display:none;">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <!-- ONBOARDING PAGE -->
     <div id="page-onboarding" class="page">
         <h1 class="kiona" style="font-size: 1rem; margin-top: 30px;">Welcome</h1>
         <div class="label">Your Name</div>
         <input type="text" id="user-name" placeholder="E.g. Mama">
         <div class="label" id="baby-label">Baby's Name</div>
         <input type="text" id="baby-names" placeholder="E.g. Cari">
-        <button id="multiples-btn" class="secondary-btn kiona" onclick="toggleMultiples()">Twins / Multiples?</button>
+        <button id="multiples-btn" class="secondary-btn kiona" onclick="toggleMultiples()">Multiples?</button>
         <button class="main-btn" onclick="saveProfile()">Start</button>
     </div>
 
-    <!-- LOG PAGE -->
     <div id="page-log" class="page">
         <div class="label">Time (Mins)</div>
         <input type="number" id="duration" placeholder="0" inputmode="numeric">
@@ -119,7 +123,6 @@
         <div id="historyList" style="margin-top: 40px;"></div>
     </div>
 
-    <!-- REMINDER PAGE -->
     <div id="page-remind" class="page">
         <div class="label">Remind me in</div>
         <div style="display: flex; gap: 10px; justify-content: center;">
@@ -139,16 +142,14 @@
     let isMultiples = false;
 
     window.onload = function() {
-        // Run splash timer
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             splash.style.opacity = '0';
-            
             setTimeout(() => {
                 splash.remove();
-                initApp(); // Start actual app logic
+                initApp();
             }, 800);
-        }, 2200); // 2.2 seconds to allow the fade-out animation to look smooth
+        }, 2200);
     };
 
     function toggleMultiples() {
@@ -170,7 +171,6 @@
     function initApp() {
         const profile = JSON.parse(localStorage.getItem('sb_profile'));
         document.getElementById('app-logo').style.display = 'block';
-        
         if(profile) {
             document.getElementById('page-onboarding').classList.remove('active');
             document.getElementById('main-nav').style.display = 'flex';
