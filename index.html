@@ -35,29 +35,50 @@
 
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
 
+        /* Larger Navigation Bar */
         .nav-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; margin-top: 10px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
         .nav-item.active { opacity: 1; font-weight: 600; }
 
+        /* Larger Toggle Switch */
         .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-around; font-size: 14px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--toggle-bg);
+            transition: .4s; border-radius: 34px;
+            display: flex; align-items: center; justify-content: space-around;
+            font-size: 14px;
+        }
+        .slider:before {
+            position: absolute; content: "";
+            height: 24px; width: 24px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s; border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
         input:checked + .slider:before { transform: translateX(28px); }
 
-        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; text-align: center; }
+        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 35px; opacity: 0.7; text-align: center; }
         .brand-logo span { font-weight: 600; }
-        .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; max-width: 300px; line-height: 1.5; }
 
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
 
         .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
-        input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.2rem; border-radius: 0; outline: none; }
+
+        input, select { 
+            width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color);
+            background: var(--input-bg); color: var(--text-color);
+            font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.2rem;
+            border-radius: 0; outline: none;
+        }
 
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; border-radius: 2px; }
-        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
 
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
@@ -71,34 +92,23 @@
 </head>
 <body data-theme="light">
 
-    <div id="main-nav" class="nav-bar" style="display: none;">
+    <div class="nav-bar">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
             <span class="nav-item" id="btn-remind" onclick="showPage('remind')">Remind</span>
         </div>
         <label class="switch">
             <input type="checkbox" id="themeToggle" onclick="toggleTheme()">
-            <span class="slider"><span>☀️</span><span>🌙</span></span>
+            <span class="slider">
+                <span>☀️</span>
+                <span>🌙</span>
+            </span>
         </label>
     </div>
 
     <div class="brand-logo">Snoozy<span>Bubba</span></div>
-    <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <!-- ONBOARDING -->
-    <div id="page-onboarding" class="page">
-        <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
-        <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
-        <div class="label">Your Name</div>
-        <input type="text" id="user-name" placeholder="E.g. Mama">
-        <div class="label" id="baby-label">Baby's Name</div>
-        <input type="text" id="baby-names" placeholder="E.g. Cari">
-        <button id="multiples-btn" class="secondary-btn kiona" onclick="toggleMultiples()">Twins / Multiples?</button>
-        <button class="main-btn kiona" onclick="saveProfile()">Start Logging</button>
-    </div>
-
-    <!-- LOG PAGE -->
-    <div id="page-log" class="page">
+    <div id="page-log" class="page active">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Pump Log</h1>
         <div class="label">Time Pumped (Mins)</div>
         <input type="number" id="duration" placeholder="0" inputmode="numeric">
@@ -112,7 +122,6 @@
         </div>
     </div>
 
-    <!-- REMINDER PAGE -->
     <div id="page-remind" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-bottom: 50px;">Reminder</h1>
         <div class="label">Remind me in</div>
@@ -131,59 +140,16 @@
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
     for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}</option>`;
 
-    let isMultiples = false;
-
-    window.onload = initApp;
-
-    function toggleMultiples() {
-        isMultiples = !isMultiples;
-        const label = document.getElementById('baby-label');
-        const input = document.getElementById('baby-names');
-        const btn = document.getElementById('multiples-btn');
-        if(isMultiples) {
-            label.innerText = "Babies' Names (Comma Separated)";
-            input.placeholder = "E.g. Cari, Mia, Noah";
-            btn.innerText = "Just one baby?";
-        } else {
-            label.innerText = "Baby's Name";
-            input.placeholder = "E.g. Cari";
-            btn.innerText = "Twins / Multiples?";
-        }
-    }
-
-    function saveProfile() {
-        const uName = document.getElementById('user-name').value.trim();
-        const bRaw = document.getElementById('baby-names').value.trim();
-        if(!uName || !bRaw) return alert("Please fill in names!");
-        const babies = bRaw.split(',').map(n => n.trim()).filter(n => n !== "");
-        localStorage.setItem('sb_userProfile', JSON.stringify({user: uName, babies: babies}));
-        initApp();
-    }
-
-    function initApp() {
-        const profile = JSON.parse(localStorage.getItem('sb_userProfile'));
-        if(profile) {
-            document.getElementById('page-onboarding').classList.remove('active');
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('user-greeting').innerText = `Hi ${profile.user} • For ${profile.babies.join(' & ')}`;
-            showPage('log');
-        } else {
-            showPage('onboarding');
-        }
-        displayHistory();
-        updateReminderUI();
-    }
-
     function showPage(pageName) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById('page-' + pageName).classList.add('active');
-        const btn = document.getElementById('btn-' + pageName);
-        if(btn) btn.classList.add('active');
+        document.getElementById('btn-' + pageName).classList.add('active');
     }
 
     function toggleTheme() {
-        const theme = document.getElementById('themeToggle').checked ? 'dark' : 'light';
+        const isChecked = document.getElementById('themeToggle').checked;
+        const theme = isChecked ? 'dark' : 'light';
         document.body.setAttribute('data-theme', theme);
         localStorage.setItem('pumpTheme', theme);
     }
@@ -247,4 +213,15 @@
         }
     }
 
-    function
+    function clearHistory() { if(confirm("Clear all?")) { localStorage.removeItem('pumpLogs'); displayHistory(); } }
+
+    const savedTheme = localStorage.getItem('pumpTheme');
+    if(savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').checked = true;
+    }
+    displayHistory();
+    updateReminderUI();
+</script>
+</body>
+</html>
