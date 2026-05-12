@@ -3,240 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnoozyBubba PumpLog</title>
+    <title>PumpLog</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #f9f7f2; --text-color: #2d2d2d; --border-color: #e0ddd5; 
-            --delete-color: #d9534f; --toggle-bg: #e0ddd5; --input-bg: rgba(255, 255, 255, 0.3);
-        }
-        [data-theme="dark"] {
-            --bg-color: #121212; --text-color: #ffffff; --border-color: #333333; 
-            --delete-color: #ff6666; --toggle-bg: #333333; --input-bg: transparent;
-        }
-        body { 
-            font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh;
-            transition: background 0.4s ease, color 0.4s ease; overflow-x: hidden;
-        }
-
-        /* --- SPLASH SCREEN --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; transition: opacity 0.8s ease;
-        }
-        .splash-text { font-size: 2.2rem; letter-spacing: 8px; text-transform: uppercase; font-weight: 200; opacity: 0; animation: fadeInOut 2.2s forwards; text-align: center; }
-        .splash-sub { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0; animation: fadeInOut 2.2s forwards; animation-delay: 0.4s; text-align: center; margin-top: 10px;}
-        .splash-logo { font-size: 1.1rem; letter-spacing: -0.5px; font-weight: 300; opacity: 0; animation: fadeInOut 2.2s forwards; animation-delay: 0.8s; margin-top: 5px; }
-        .splash-logo span { font-weight: 600; }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(15px); }
-            35% { opacity: 0.8; transform: translateY(0); }
-            75% { opacity: 0.8; }
-            100% { opacity: 0; transform: translateY(-5px); }
-        }
-
-        /* --- UI ELEMENTS --- */
-        .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
+        :root { --bg: #f9f7f2; --txt: #2d2d2d; --brd: #e0ddd5; --del: #d9534f; }
+        [data-theme="dark"] { --bg: #121212; --txt: #ffffff; --brd: #333333; --del: #ff6666; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--txt); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; transition: 0.4s; overflow-x: hidden; }
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; transition: 0.8s; }
+        .s-text { font-size: 2.2rem; letter-spacing: 8px; text-transform: uppercase; font-weight: 200; opacity: 0; animation: fIO 2.2s forwards; }
+        .s-logo { font-size: 1.1rem; letter-spacing: -0.5px; opacity: 0; animation: fIO 2.2s forwards; animation-delay: 0.8s; margin-top: 10px; }
+        @keyframes fIO { 0% { opacity: 0; transform: translateY(15px); } 35%, 75% { opacity: 0.8; transform: translateY(0); } 100% { opacity: 0; } }
         .nav-bar { width: 100%; max-width: 360px; display: none; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .nav-links { display: flex; gap: 25px; }
-        .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; }
+        .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; text-transform: uppercase; }
         .nav-item.active { opacity: 1; font-weight: 600; }
-        
-        .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-around; font-size: 14px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider:before { transform: translateX(28px); }
-        
-        .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; }
-        .brand-logo span { font-weight: 600; }
-        .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; }
-        
+        .brand-logo { font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; display:none; }
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
-        .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
-        input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.1rem; outline: none; border-radius: 0;}
-        
-        button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 40px; cursor: pointer; border-radius: 2px; text-transform: uppercase; letter-spacing: 4px; }
-        .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
-        
-        /* --- HISTORY LIST --- */
-        .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .val-main { font-weight: 600; font-size: 1rem; }
-        .val-sub { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; }
+        .label { font-size: 0.7rem; letter-spacing: 3px; margin: 25px 0 12px; font-weight: 600; text-transform: uppercase; }
+        input { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--brd); background: transparent; color: var(--txt); text-align: center; font-size: 1.1rem; outline: none; }
+        .main-btn { background: var(--txt); color: var(--bg); border: none; padding: 20px; width: 100%; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 4px; }
+        .history-item { padding: 15px 0; border-bottom: 1px solid var(--brd); display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .actions { display: flex; gap: 15px; align-items: center; }
-        .edit-icon { cursor: pointer; font-size: 1rem; opacity: 0.4; }
-        .del-text { color: var(--delete-color); font-size: 0.6rem; cursor: pointer; font-weight: 600; text-transform: uppercase; opacity: 0.7; }
+        .edit-btn { cursor: pointer; font-size: 1rem; opacity: 0.4; }
+        .del-btn { color: var(--del); font-size: 0.6rem; cursor: pointer; font-weight: 600; text-transform: uppercase; }
     </style>
 </head>
 <body>
-
-    <div id="splash-screen">
-        <div class="splash-text">Pump Log</div>
-        <div class="splash-sub">By</div>
-        <div class="splash-logo">Snoozy<span>Bubba</span></div>
-    </div>
-
+    <div id="splash-screen"><div class="s-text">Pump Log</div><div class="s-logo">Snoozy<b>Bubba</b></div></div>
     <div id="main-nav" class="nav-bar">
-        <div class="nav-links kiona">
-            <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
-            <span class="nav-item" id="btn-remind" onclick="showPage('remind')">Remind</span>
-        </div>
-        <label class="switch">
-            <input type="checkbox" id="themeToggle" onclick="toggleTheme()">
-            <span class="slider"><span>☀️</span><span>🌙</span></span>
-        </label>
+        <div style="display:flex; gap:20px;"><span class="nav-item active" id="b-log" onclick="showP('log')">Log</span><span class="nav-item" id="b-rem" onclick="showP('rem')">Remind</span></div>
+        <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')=='dark'?'light':'dark')" style="background:none; border:none; cursor:pointer;">🌓</button>
     </div>
-
-    <div id="app-logo" class="brand-logo" style="display:none;">Snoozy<span>Bubba</span></div>
-    <div id="user-greeting" class="welcome-msg kiona"></div>
-
-    <div id="page-onboarding" class="page">
-        <h1 class="kiona" style="font-size: 1rem; margin-top: 30px;">Welcome</h1>
-        <div class="label">Your Name</div>
-        <input type="text" id="user-name" placeholder="E.g. Mama">
-        <div class="label" id="baby-label">Baby's Name</div>
-        <input type="text" id="baby-names" placeholder="E.g. Cari">
-        <button id="multiples-btn" class="secondary-btn kiona" onclick="toggleMultiples()">Multiples?</button>
-        <button class="main-btn" onclick="saveProfile()">Start</button>
+    <div id="app-logo" class="brand-logo">Snoozy<b>Bubba</b></div>
+    <div id="user-msg" style="font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;"></div>
+    <div id="p-onboard" class="page">
+        <div class="label">Your Name</div><input type="text" id="u-n" placeholder="Mama">
+        <div class="label" id="b-l">Baby's Name</div><input type="text" id="b-n" placeholder="Cari">
+        <button class="main-btn" onclick="savePr()">Start</button>
     </div>
-
-    <div id="page-log" class="page">
-        <div class="label">Time (Mins)</div>
-        <input type="number" id="duration" placeholder="0" inputmode="numeric">
-        <div class="label">Amount (Oz)</div>
-        <input type="number" id="volume" placeholder="0.0" step="0.5" inputmode="decimal">
-        
-        <button id="confirm-btn" class="main-btn" onclick="logSession()">Confirm</button>
-        <button id="update-btn" class="main-btn" style="display:none; background: #6c757d;" onclick="updateSession()">Save Changes</button>
-        <button id="cancel-edit" class="secondary-btn" style="display:none;" onclick="resetForm()">Cancel</button>
-
-        <div id="historyList" style="margin-top: 40px;"></div>
+    <div id="p-log" class="page">
+        <div class="label">Mins</div><input type="number" id="dur" placeholder="0">
+        <div class="label">Oz</div><input type="number" id="vol" placeholder="0.0" step="0.5">
+        <button id="conf-btn" class="main-btn" onclick="logS()">Confirm</button>
+        <button id="upd-btn" class="main-btn" style="display:none; background:#6c757d;" onclick="updS()">Update</button>
+        <div id="h-list" style="margin-top:30px;"></div>
     </div>
-
-    <div id="page-remind" class="page">
-        <div class="label">Remind me in</div>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <select id="rem-hours" style="width: 70px;"></select>
-            <select id="rem-mins" style="width: 70px;"></select>
-        </div>
-        <button class="main-btn" onclick="alert('Reminder logic is active!')">Set</button>
-    </div>
-
+    <div id="p-rem" class="page"><div class="label">Reminders coming soon</div></div>
 <script>
-    const hSel = document.getElementById('rem-hours');
-    const mSel = document.getElementById('rem-mins');
-    let editingId = null;
-    let isMultiples = false;
-
-    for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}">${i}h</option>`;
-    for(let i=0; i<60; i+=15) mSel.innerHTML += `<option value="${i}">${i}m</option>`;
-
-    window.onload = function() {
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            if(splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => { splash.remove(); initApp(); }, 800);
-            }
-        }, 2200);
-    };
-
-    function initApp() {
-        const profile = JSON.parse(localStorage.getItem('sb_profile'));
-        document.getElementById('app-logo').style.display = 'block';
-        if(profile) {
-            document.getElementById('page-onboarding').classList.remove('active');
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('user-greeting').innerText = `Hi ${profile.u} • For ${profile.babies.join(' & ')}`;
-            showPage('log');
-            displayHistory();
-        } else { showPage('onboarding'); }
+    let editId = null;
+    window.onload = () => setTimeout(() => { document.getElementById('splash-screen').style.opacity='0'; setTimeout(() => { document.getElementById('splash-screen').remove(); init(); }, 800); }, 2200);
+    function init() {
+        const pr = JSON.parse(localStorage.getItem('sb_pr'));
+        document.getElementById('app-logo').style.display='block';
+        if(pr) { document.getElementById('main-nav').style.display='flex'; document.getElementById('user-msg').innerText=`Hi ${pr.u} • For ${pr.b}`; showP('log'); dispH(); }
+        else showP('onboard');
     }
-
-    function toggleMultiples() {
-        isMultiples = !isMultiples;
-        document.getElementById('baby-label').innerText = isMultiples ? "Babies (Cari, Mia)" : "Baby's Name";
-        document.getElementById('baby-names').placeholder = isMultiples ? "Cari, Mia" : "E.g. Cari";
-        document.getElementById('multiples-btn').innerText = isMultiples ? "Just one?" : "Multiples?";
+    function savePr() {
+        const u = document.getElementById('u-n').value, b = document.getElementById('b-n').value;
+        if(u && b) { localStorage.setItem('sb_pr', JSON.stringify({u, b})); init(); }
     }
-
-    function saveProfile() {
-        const u = document.getElementById('user-name').value.trim();
-        const b = document.getElementById('baby-names').value.trim();
-        if(!u || !b) return;
-        const babies = b.split(',').map(n => n.trim()).filter(n => n);
-        localStorage.setItem('sb_profile', JSON.stringify({u, babies}));
-        initApp();
-    }
-
-    function showPage(p) {
+    function showP(p) {
         document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById('page-' + p).classList.add('active');
-        if(document.getElementById('btn-' + p)) document.getElementById('btn-' + p).classList.add('active');
-        resetForm();
+        document.getElementById('p-'+p).classList.add('active');
     }
-
-    function logSession() {
-        const d = document.getElementById('duration').value;
-        const v = document.getElementById('volume').value;
+    function logS() {
+        const d = document.getElementById('dur').value, v = document.getElementById('vol').value;
         if(!d || !v) return;
-        let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
-        logs.unshift({id: Date.now(), d, v, t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
-        localStorage.setItem('sb_logs', JSON.stringify(logs.slice(0, 10)));
-        resetForm();
-        displayHistory();
+        let l = JSON.parse(localStorage.getItem('sb_l')) || [];
+        l.unshift({id: Date.now(), d, v, t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
+        localStorage.setItem('sb_l', JSON.stringify(l.slice(0,10)));
+        reset(); dispH();
     }
-
-    function editLog(id) {
-        let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
-        let log = logs.find(l => l.id === id);
-        if(log) {
-            editingId = id;
-            document.getElementById('duration').value = log.d;
-            document.getElementById('volume').value = log.v;
-            document.getElementById('confirm-btn').style.display = 'none';
-            document.getElementById('update-btn').style.display = 'block';
-            document.getElementById('cancel-edit').style.display = 'block';
-        }
+    function editL(id) {
+        let l = JSON.parse(localStorage.getItem('sb_l')).find(x => x.id === id);
+        editId = id; document.getElementById('dur').value = l.d; document.getElementById('vol').value = l.v;
+        document.getElementById('conf-btn').style.display='none'; document.getElementById('upd-btn').style.display='block';
     }
-
-    function updateSession() {
-        let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
-        let index = logs.findIndex(l => l.id === editingId);
-        if(index !== -1) {
-            logs[index].d = document.getElementById('duration').value;
-            logs[index].v = document.getElementById('volume').value;
-            localStorage.setItem('sb_logs', JSON.stringify(logs));
-            resetForm();
-            displayHistory();
-        }
+    function updS() {
+        let l = JSON.parse(localStorage.getItem('sb_l'));
+        let i = l.findIndex(x => x.id === editId);
+        l[i].d = document.getElementById('dur').value; l[i].v = document.getElementById('vol').value;
+        localStorage.setItem('sb_l', JSON.stringify(l)); reset(); dispH();
     }
-
-    function deleteLog(id) {
-        let logs = JSON.parse(localStorage.getItem('sb_logs')).filter(l => l.id !== id);
-        localStorage.setItem('sb_logs', JSON.stringify(logs));
-        displayHistory();
+    function delL(id) {
+        let l = JSON.parse(localStorage.getItem('sb_l')).filter(x => x.id !== id);
+        localStorage.setItem('sb_l', JSON.stringify(l)); dispH();
     }
-
-    function resetForm() {
-        editingId = null;
-        document.getElementById('duration').value = '';
-        document.getElementById('volume').value = '';
-        document.getElementById('confirm-btn').style.display = 'block';
-        document.getElementById('update-btn').style.display = 'none';
-        document.getElementById('cancel-edit').style.display = 'none';
-    }
-
-    function displayHistory() {
-        const logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
-        let html = '';
-        logs.forEach(l => {
-            html += `
+    function reset() { editId=null; document.getElementById('dur').value=''; document.getElementById('vol').value=''; document.getElementById('conf-btn').style.display='block'; document.getElementById('upd-btn').style.display='none'; }
+    function dispH() {
+        const l = JSON.parse(localStorage.getItem('sb_l')) || [];
+        document.getElementById('h-list').innerHTML = l.map(x => `
             <div class="history-item">
-                <div style="text-align:left"><div class="val-main">${l.v} Oz</div><div class="
+                <div style="text-align:left"><b>${x.v} Oz</b><br><small style="opacity:0.5">${x.t}</small></div>
+                <div><b>${x.d}m</b></div>
+                <div class="actions"><span class="edit-btn" onclick="editL(${x.id})">✎</span><span class="del-btn" onclick="delL(${x.id})">Del</span></div>
+            </div>`).join('');
+    }
+</script>
+</body>
+</html>
