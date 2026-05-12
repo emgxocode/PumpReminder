@@ -103,7 +103,8 @@
 
     function toggleMultiples() {
         isMultiples = !isMultiples;
-        document.getElementById('baby-label').innerText = isMultiples ? "Babies (Leo, Mia)" : "Baby's Name";
+        // Updated label and placeholder examples to Cari and Mia
+        document.getElementById('baby-label').innerText = isMultiples ? "Babies (Cari, Mia)" : "Baby's Name";
         document.getElementById('baby-names').placeholder = isMultiples ? "Cari, Mia, Noah" : "E.g. Cari";
         document.getElementById('multiples-btn').innerText = isMultiples ? "Just one?" : "Multiples?";
     }
