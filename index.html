@@ -65,12 +65,11 @@
         .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
         
         /* --- HISTORY LIST --- */
-        .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; }
-        .actions { display: flex; gap: 20px; align-items: center; }
-        .edit-icon { cursor: pointer; font-size: 1rem; opacity: 0.4; padding: 5px; }
-        .edit-icon:hover { opacity: 1; }
+        .actions { display: flex; gap: 15px; align-items: center; }
+        .edit-icon { cursor: pointer; font-size: 1rem; opacity: 0.4; }
         .del-text { color: var(--delete-color); font-size: 0.6rem; cursor: pointer; font-weight: 600; text-transform: uppercase; opacity: 0.7; }
     </style>
 </head>
@@ -114,7 +113,7 @@
         
         <button id="confirm-btn" class="main-btn" onclick="logSession()">Confirm</button>
         <button id="update-btn" class="main-btn" style="display:none; background: #6c757d;" onclick="updateSession()">Save Changes</button>
-        <button id="cancel-edit" class="secondary-btn" style="display:none;" onclick="resetForm()">Cancel Edit</button>
+        <button id="cancel-edit" class="secondary-btn" style="display:none;" onclick="resetForm()">Cancel</button>
 
         <div id="historyList" style="margin-top: 40px;"></div>
     </div>
@@ -125,8 +124,7 @@
             <select id="rem-hours" style="width: 70px;"></select>
             <select id="rem-mins" style="width: 70px;"></select>
         </div>
-        <button class="main-btn" onclick="setReminder()">Set</button>
-        <div id="reminderStatus" class="kiona" style="margin-top:20px; font-size: 0.7rem;"></div>
+        <button class="main-btn" onclick="alert('Reminder logic is active!')">Set</button>
     </div>
 
 <script>
@@ -144,7 +142,7 @@
             if(splash) {
                 splash.style.opacity = '0';
                 setTimeout(() => { splash.remove(); initApp(); }, 800);
-            } else { initApp(); }
+            }
         }, 2200);
     };
 
@@ -163,14 +161,14 @@
     function toggleMultiples() {
         isMultiples = !isMultiples;
         document.getElementById('baby-label').innerText = isMultiples ? "Babies (Cari, Mia)" : "Baby's Name";
-        document.getElementById('baby-names').placeholder = isMultiples ? "Cari, Mia, Noah" : "E.g. Cari";
+        document.getElementById('baby-names').placeholder = isMultiples ? "Cari, Mia" : "E.g. Cari";
         document.getElementById('multiples-btn').innerText = isMultiples ? "Just one?" : "Multiples?";
     }
 
     function saveProfile() {
         const u = document.getElementById('user-name').value.trim();
         const b = document.getElementById('baby-names').value.trim();
-        if(!u || !b) return alert("Fill in names!");
+        if(!u || !b) return;
         const babies = b.split(',').map(n => n.trim()).filter(n => n);
         localStorage.setItem('sb_profile', JSON.stringify({u, babies}));
         initApp();
@@ -205,7 +203,6 @@
             document.getElementById('confirm-btn').style.display = 'none';
             document.getElementById('update-btn').style.display = 'block';
             document.getElementById('cancel-edit').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -238,4 +235,8 @@
 
     function displayHistory() {
         const logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
-        document.getElementById('historyList').innerHTML = logs.map(l
+        let html = '';
+        logs.forEach(l => {
+            html += `
+            <div class="history-item">
+                <div style="text-align:left"><div class="val-main">${l.v} Oz</div><div class="
