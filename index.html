@@ -68,8 +68,8 @@
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; }
-        .actions { display: flex; gap: 15px; align-items: center; }
-        .edit-icon { cursor: pointer; font-size: 0.9rem; opacity: 0.4; transition: 0.3s; }
+        .actions { display: flex; gap: 20px; align-items: center; }
+        .edit-icon { cursor: pointer; font-size: 1rem; opacity: 0.4; padding: 5px; }
         .edit-icon:hover { opacity: 1; }
         .del-text { color: var(--delete-color); font-size: 0.6rem; cursor: pointer; font-weight: 600; text-transform: uppercase; opacity: 0.7; }
     </style>
@@ -141,8 +141,10 @@
     window.onload = function() {
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.remove(); initApp(); }, 800);
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.remove(); initApp(); }, 800);
+            } else { initApp(); }
         }, 2200);
     };
 
@@ -233,6 +235,4 @@
         document.getElementById('historyList').innerHTML = logs.map(l => `
             <div class="history-item">
                 <div style="text-align:left"><div class="val-main">${l.v} Oz</div><div class="val-sub">${l.t}</div></div>
-                <div class="val-main">${l.d}m</div>
-                <div class="actions">
-                    <span class="
+                <div class="val-main">${l.d
