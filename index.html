@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PumpLog</title>
+    <title>SnoozyBubba PumpLog</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f9f7f2; --txt: #2d2d2d; --brd: #e0ddd5; --del: #d9534f; }
-        [data-theme="dark"] { --bg: #121212; --txt: #ffffff; --brd: #333333; --del: #ff6666; }
+        :root { --bg: #f9f7f2; --txt: #2d2d2d; --brd: #e0ddd5; --del: #d9534f; --btn-bg: #2d2d2d; }
+        [data-theme="dark"] { --bg: #121212; --txt: #ffffff; --brd: #333333; --del: #ff6666; --btn-bg: #333333; }
         body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--txt); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; transition: 0.4s; overflow-x: hidden; }
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; transition: 0.8s; }
         .s-text { font-size: 2.2rem; letter-spacing: 8px; text-transform: uppercase; font-weight: 200; opacity: 0; animation: fIO 2.2s forwards; }
@@ -16,15 +16,14 @@
         .nav-bar { width: 100%; max-width: 360px; display: none; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; text-transform: uppercase; }
         .nav-item.active { opacity: 1; font-weight: 600; }
-        .brand-logo { font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; display:none; }
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
         .label { font-size: 0.7rem; letter-spacing: 3px; margin: 25px 0 12px; font-weight: 600; text-transform: uppercase; }
-        input { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--brd); background: transparent; color: var(--txt); text-align: center; font-size: 1.1rem; outline: none; }
-        .main-btn { background: var(--txt); color: var(--bg); border: none; padding: 20px; width: 100%; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 4px; }
+        input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--brd); background: transparent; color: var(--txt); text-align: center; font-size: 1.1rem; outline: none; border-radius: 0; }
+        .main-btn { background: var(--btn-bg); color: white; border: none; padding: 20px; width: 100%; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 4px; }
         .history-item { padding: 15px 0; border-bottom: 1px solid var(--brd); display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .actions { display: flex; gap: 15px; align-items: center; }
-        .edit-btn { cursor: pointer; font-size: 1rem; opacity: 0.4; }
+        .edit-btn { cursor: pointer; font-size: 1rem; opacity: 0.4; padding: 5px; }
         .del-btn { color: var(--del); font-size: 0.6rem; cursor: pointer; font-weight: 600; text-transform: uppercase; }
     </style>
 </head>
@@ -32,64 +31,94 @@
     <div id="splash-screen"><div class="s-text">Pump Log</div><div class="s-logo">Snoozy<b>Bubba</b></div></div>
     <div id="main-nav" class="nav-bar">
         <div style="display:flex; gap:20px;"><span class="nav-item active" id="b-log" onclick="showP('log')">Log</span><span class="nav-item" id="b-rem" onclick="showP('rem')">Remind</span></div>
-        <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')=='dark'?'light':'dark')" style="background:none; border:none; cursor:pointer;">🌓</button>
+        <button onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme')=='dark'?'light':'dark')" style="background:none; border:none; cursor:pointer; font-size: 1.2rem;">🌓</button>
     </div>
-    <div id="app-logo" class="brand-logo">Snoozy<b>Bubba</b></div>
-    <div id="user-msg" style="font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;"></div>
+    <div id="app-logo" style="font-size: 1.6rem; display:none; margin-bottom:10px;">Snoozy<b>Bubba</b></div>
+    <div id="user-msg" style="font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;"></div>
+
     <div id="p-onboard" class="page">
         <div class="label">Your Name</div><input type="text" id="u-n" placeholder="Mama">
-        <div class="label" id="b-l">Baby's Name</div><input type="text" id="b-n" placeholder="Cari">
+        <div class="label">Baby's Name</div><input type="text" id="b-n" placeholder="Cari">
         <button class="main-btn" onclick="savePr()">Start</button>
     </div>
+
     <div id="p-log" class="page">
         <div class="label">Mins</div><input type="number" id="dur" placeholder="0">
         <div class="label">Oz</div><input type="number" id="vol" placeholder="0.0" step="0.5">
         <button id="conf-btn" class="main-btn" onclick="logS()">Confirm</button>
-        <button id="upd-btn" class="main-btn" style="display:none; background:#6c757d;" onclick="updS()">Update</button>
+        <button id="upd-btn" class="main-btn" style="display:none; background:#6c757d;" onclick="updS()">Update Entry</button>
         <div id="h-list" style="margin-top:30px;"></div>
     </div>
-    <div id="p-rem" class="page"><div class="label">Reminders coming soon</div></div>
+
+    <div id="p-rem" class="page">
+        <div class="label">Remind me in</div>
+        <div style="display:flex; gap:10px;"><select id="rem-h"></select><select id="rem-m"></select></div>
+        <button class="main-btn" onclick="alert('Reminder Set!')">Set Reminder</button>
+    </div>
+
 <script>
     let editId = null;
-    window.onload = () => setTimeout(() => { document.getElementById('splash-screen').style.opacity='0'; setTimeout(() => { document.getElementById('splash-screen').remove(); init(); }, 800); }, 2200);
+    for(let i=0; i<=12; i++) document.getElementById('rem-h').innerHTML += `<option value="${i}">${i}h</option>`;
+    for(let i=0; i<60; i+=15) document.getElementById('rem-m').innerHTML += `<option value="${i}">${i}m</option>`;
+
+    window.onload = () => setTimeout(() => { 
+        const s = document.getElementById('splash-screen');
+        s.style.opacity='0'; 
+        setTimeout(() => { s.remove(); init(); }, 800); 
+    }, 2200);
+
     function init() {
         const pr = JSON.parse(localStorage.getItem('sb_pr'));
         document.getElementById('app-logo').style.display='block';
-        if(pr) { document.getElementById('main-nav').style.display='flex'; document.getElementById('user-msg').innerText=`Hi ${pr.u} • For ${pr.b}`; showP('log'); dispH(); }
-        else showP('onboard');
+        if(pr) { 
+            document.getElementById('main-nav').style.display='flex'; 
+            document.getElementById('user-msg').innerText=`Hi ${pr.u} • For ${pr.b}`; 
+            showP('log'); dispH(); 
+        } else showP('onboard');
     }
+
     function savePr() {
         const u = document.getElementById('u-n').value, b = document.getElementById('b-n').value;
         if(u && b) { localStorage.setItem('sb_pr', JSON.stringify({u, b})); init(); }
     }
+
     function showP(p) {
         document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('p-'+p).classList.add('active');
+        document.getElementById('b-'+p).classList.add('active');
+        if(p==='log') reset();
     }
+
     function logS() {
         const d = document.getElementById('dur').value, v = document.getElementById('vol').value;
         if(!d || !v) return;
         let l = JSON.parse(localStorage.getItem('sb_l')) || [];
         l.unshift({id: Date.now(), d, v, t: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})});
-        localStorage.setItem('sb_l', JSON.stringify(l.slice(0,10)));
-        reset(); dispH();
+        localStorage.setItem('sb_l', JSON.stringify(l)); reset(); dispH();
     }
+
     function editL(id) {
         let l = JSON.parse(localStorage.getItem('sb_l')).find(x => x.id === id);
         editId = id; document.getElementById('dur').value = l.d; document.getElementById('vol').value = l.v;
         document.getElementById('conf-btn').style.display='none'; document.getElementById('upd-btn').style.display='block';
+        window.scrollTo(0,0);
     }
+
     function updS() {
         let l = JSON.parse(localStorage.getItem('sb_l'));
         let i = l.findIndex(x => x.id === editId);
         l[i].d = document.getElementById('dur').value; l[i].v = document.getElementById('vol').value;
         localStorage.setItem('sb_l', JSON.stringify(l)); reset(); dispH();
     }
+
     function delL(id) {
         let l = JSON.parse(localStorage.getItem('sb_l')).filter(x => x.id !== id);
         localStorage.setItem('sb_l', JSON.stringify(l)); dispH();
     }
+
     function reset() { editId=null; document.getElementById('dur').value=''; document.getElementById('vol').value=''; document.getElementById('conf-btn').style.display='block'; document.getElementById('upd-btn').style.display='none'; }
+
     function dispH() {
         const l = JSON.parse(localStorage.getItem('sb_l')) || [];
         document.getElementById('h-list').innerHTML = l.map(x => `
