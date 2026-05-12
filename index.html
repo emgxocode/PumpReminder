@@ -33,43 +33,41 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* --- SPLASH SCREEN --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; transition: opacity 0.6s ease;
-        }
-        .splash-title { font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 8px; font-weight: 200; font-size: 1.1rem; opacity: 0.5; margin-bottom: 10px; }
-        .splash-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.8rem; letter-spacing: -0.5px; margin-bottom: 50px; }
-        .splash-logo span { font-weight: 600; }
-        .enter-btn { background: none; border: 1px solid var(--text-color); color: var(--text-color); padding: 15px 40px; text-transform: uppercase; letter-spacing: 4px; font-size: 0.7rem; cursor: pointer; opacity: 0.8; transition: 0.3s; }
-        .splash-hidden { opacity: 0 !important; pointer-events: none; }
-
-        /* --- APP STYLES --- */
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
+
+        /* --- NAV BAR --- */
         .nav-bar { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; margin-top: 10px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; transition: 0.3s; }
         .nav-item.active { opacity: 1; font-weight: 600; }
+        
+        /* --- THEME TOGGLE --- */
         .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-around; font-size: 14px; }
         .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         input:checked + .slider:before { transform: translateX(28px); }
+        
+        /* --- BRANDING --- */
         .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; text-align: center; }
         .brand-logo span { font-weight: 600; }
         .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; max-width: 300px; line-height: 1.5; }
+        
+        /* --- LAYOUT --- */
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
         .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
         input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.2rem; border-radius: 0; outline: none; }
+        
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 50px; cursor: pointer; border-radius: 2px; }
         .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 25px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
+        
+        /* --- LISTS --- */
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; letter-spacing: 1.5px; opacity: 0.5; text-transform: uppercase; }
         .del-text { color: var(--delete-color); font-size: 0.6rem; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; font-weight: 600; padding: 5px; }
+        
         .footer { margin-top: 60px; padding-bottom: 40px; text-align: center; width: 100%; }
         .clear-btn { background: none; border: none; color: var(--text-color); opacity: 0.3; font-size: 0.6rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; }
         .del-rem-btn { background: none; border: none; color: var(--delete-color); font-size: 0.65rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; font-weight: 600; margin-top: 20px; display: none; }
@@ -77,14 +75,7 @@
 </head>
 <body data-theme="light">
 
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-        <div class="splash-title">PUMP LOG</div>
-        <div class="splash-logo">Snoozy<span>Bubba</span></div>
-        <button class="enter-btn" onclick="enterApp()">Enter</button>
-    </div>
-
-    <!-- App Content -->
+    <!-- App Header -->
     <div id="main-nav" class="nav-bar" style="display: none;">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
@@ -96,10 +87,10 @@
         </label>
     </div>
 
-    <div id="app-brand" class="brand-logo" style="display: none;">Snoozy<span>Bubba</span></div>
+    <div class="brand-logo">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
-    <!-- ONBOARDING -->
+    <!-- ONBOARDING PAGE -->
     <div id="page-onboarding" class="page">
         <h1 class="kiona" style="font-size: 1.1rem; margin-top: 40px; margin-bottom: 20px;">Welcome</h1>
         <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 40px;">Let's personalize your experience.</p>
@@ -145,6 +136,7 @@
     </div>
 
 <script>
+    // Initialize Reminder Dropdowns
     const hSel = document.getElementById('rem-hours');
     const mSel = document.getElementById('rem-mins');
     for(let i=0; i<=12; i++) hSel.innerHTML += `<option value="${i}" ${i===3?'selected':''}>${i}</option>`;
@@ -152,15 +144,8 @@
 
     let isMultiples = false;
 
-    function enterApp() {
-        const splash = document.getElementById('splash-screen');
-        splash.classList.add('splash-hidden');
-        setTimeout(() => {
-            splash.remove();
-            document.getElementById('app-brand').style.display = 'block';
-            initApp();
-        }, 600);
-    }
+    // Start App immediately
+    window.onload = initApp;
 
     function toggleMultiples() {
         isMultiples = !isMultiples;
@@ -230,4 +215,48 @@
         displayHistory();
     }
 
-    function displayHistory()
+    function displayHistory() {
+        const history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        const container = document.getElementById('historyList');
+        container.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div style="text-align: left;">
+                    <div class="val-main">${item.amount} Oz</div>
+                    <div class="val-sub">${item.duration} MINS • ${item.time}</div>
+                </div>
+                <div class="del-text" onclick="deleteEntry(${item.id})">Delete</div>
+            </div>
+        `).join('');
+    }
+
+    function deleteEntry(id) {
+        let history = JSON.parse(localStorage.getItem('pumpLogs')) || [];
+        history = history.filter(item => item.id !== id);
+        localStorage.setItem('pumpLogs', JSON.stringify(history));
+        displayHistory();
+    }
+
+    function clearHistory() {
+        if(confirm("Clear all logs?")) {
+            localStorage.removeItem('pumpLogs');
+            displayHistory();
+        }
+    }
+
+    function setReminder() {
+        const h = parseInt(document.getElementById('rem-hours').value);
+        const m = parseInt(document.getElementById('rem-mins').value);
+        if(h === 0 && m === 0) return;
+        const targetTime = Date.now() + (h * 3600000) + (m * 60000);
+        localStorage.setItem('sb_pumpReminder', targetTime);
+        updateReminderUI();
+    }
+
+    function deleteReminder() {
+        localStorage.removeItem('sb_pumpReminder');
+        updateReminderUI();
+    }
+
+    function updateReminderUI() {
+        const target = localStorage.getItem('sb_pumpReminder');
+        const status =
