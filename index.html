@@ -17,27 +17,58 @@
         body { 
             font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-color);
             display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh;
-            transition: background 0.4s ease, color 0.4s ease;
+            transition: background 0.4s ease, color 0.4s ease; overflow-x: hidden;
         }
+
+        /* --- SPLASH SCREEN STYLES --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; transition: opacity 0.8s ease;
+        }
+        .splash-text { 
+            font-size: 0.8rem; letter-spacing: 5px; text-transform: uppercase; 
+            opacity: 0; animation: fadeInOut 2s forwards; font-weight: 300;
+        }
+        .splash-logo { 
+            font-size: 1.8rem; letter-spacing: -0.5px; font-weight: 300;
+            opacity: 0; animation: fadeInOut 2s forwards; animation-delay: 0.8s;
+            margin-top: 10px;
+        }
+        .splash-logo span { font-weight: 600; }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            30% { opacity: 0.6; transform: translateY(0); }
+            70% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
+        /* --- APP CONTENT --- */
         .kiona { text-transform: uppercase; letter-spacing: 5px; font-weight: 200; }
         .nav-bar { width: 100%; max-width: 360px; display: none; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .nav-links { display: flex; gap: 25px; }
         .nav-item { font-size: 0.85rem; letter-spacing: 3px; cursor: pointer; opacity: 0.4; }
         .nav-item.active { opacity: 1; font-weight: 600; }
+        
         .switch { position: relative; display: inline-block; width: 60px; height: 32px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--toggle-bg); transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-around; font-size: 14px; }
         .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider:before { transform: translateX(28px); }
+        
         .brand-logo { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1.6rem; letter-spacing: -0.5px; margin-bottom: 10px; opacity: 0.7; }
         .brand-logo span { font-weight: 600; }
         .welcome-msg { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; margin-bottom: 30px; text-align: center; }
+        
         .page { display: none; width: 100%; max-width: 340px; text-align: center; }
         .page.active { display: block; }
         .label { font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 12px; margin-top: 25px; font-weight: 600; text-transform: uppercase; }
         input, select { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: 'Montserrat', sans-serif; text-align: center; font-size: 1.1rem; outline: none; }
         button.main-btn { background: var(--text-color); color: var(--bg-color); border: none; padding: 22px; width: 100%; margin-top: 40px; cursor: pointer; border-radius: 2px; text-transform: uppercase; letter-spacing: 4px; }
         .secondary-btn { background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 0.7rem; opacity: 0.7; }
+        
         .history-item { padding: 20px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .val-main { font-weight: 600; font-size: 1rem; }
         .val-sub { font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; }
@@ -46,6 +77,13 @@
 </head>
 <body>
 
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-text">Pump Log</div>
+        <div class="splash-logo">Snoozy<span>Bubba</span></div>
+    </div>
+
+    <!-- App Content (Hidden until splash finishes) -->
     <div id="main-nav" class="nav-bar">
         <div class="nav-links kiona">
             <span class="nav-item active" id="btn-log" onclick="showPage('log')">Log</span>
@@ -57,9 +95,10 @@
         </label>
     </div>
 
-    <div class="brand-logo">Snoozy<span>Bubba</span></div>
+    <div id="app-logo" class="brand-logo" style="display:none;">Snoozy<span>Bubba</span></div>
     <div id="user-greeting" class="welcome-msg kiona"></div>
 
+    <!-- ONBOARDING PAGE -->
     <div id="page-onboarding" class="page">
         <h1 class="kiona" style="font-size: 1rem; margin-top: 30px;">Welcome</h1>
         <div class="label">Your Name</div>
@@ -70,6 +109,7 @@
         <button class="main-btn" onclick="saveProfile()">Start</button>
     </div>
 
+    <!-- LOG PAGE -->
     <div id="page-log" class="page">
         <div class="label">Time (Mins)</div>
         <input type="number" id="duration" placeholder="0" inputmode="numeric">
@@ -79,6 +119,7 @@
         <div id="historyList" style="margin-top: 40px;"></div>
     </div>
 
+    <!-- REMINDER PAGE -->
     <div id="page-remind" class="page">
         <div class="label">Remind me in</div>
         <div style="display: flex; gap: 10px; justify-content: center;">
@@ -98,12 +139,20 @@
     let isMultiples = false;
 
     window.onload = function() {
-        initApp();
+        // Run splash timer
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            
+            setTimeout(() => {
+                splash.remove();
+                initApp(); // Start actual app logic
+            }, 800);
+        }, 2200); // 2.2 seconds to allow the fade-out animation to look smooth
     };
 
     function toggleMultiples() {
         isMultiples = !isMultiples;
-        // Updated label and placeholder examples to Cari and Mia
         document.getElementById('baby-label').innerText = isMultiples ? "Babies (Cari, Mia)" : "Baby's Name";
         document.getElementById('baby-names').placeholder = isMultiples ? "Cari, Mia, Noah" : "E.g. Cari";
         document.getElementById('multiples-btn').innerText = isMultiples ? "Just one?" : "Multiples?";
@@ -120,6 +169,8 @@
 
     function initApp() {
         const profile = JSON.parse(localStorage.getItem('sb_profile'));
+        document.getElementById('app-logo').style.display = 'block';
+        
         if(profile) {
             document.getElementById('page-onboarding').classList.remove('active');
             document.getElementById('main-nav').style.display = 'flex';
